@@ -1,5 +1,3 @@
-import { CommaFormatted, CurrencyFormatted } from '../../utils/NumberFormatterUtils.js'
-
 const saleReportColumn = [
   {
     title: 'Nº',

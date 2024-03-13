@@ -1,46 +1,53 @@
-import { useEffect, useState } from "react";
-import { Select, DatePicker, Button, Table } from "antd";
-import "./Report.css";
-import { saleReportColumn } from "./ReportColumns.js";
-import { useLazyRetrieveSaleReportQuery } from "../../slices/reportSlices.js";
-import { toast } from "react-toastify";
-const { Option } = Select;
-const { RangePicker } = DatePicker;
+import { useEffect, useState } from 'react'
+import { Select, DatePicker, Button, Table } from 'antd'
+import './Report.css'
+import { saleReportColumn } from './ReportColumns.js'
+import { useLazyRetrieveSaleReportQuery } from '../../slices/reportSlices.js'
+import { toast } from 'react-toastify'
+import dayjs from 'dayjs'
+const { Option } = Select
+const { RangePicker } = DatePicker
 
 const Report = () => {
   //Report Type
-  const [reportTitle, setReportTitle] = useState("Report");
-  const [selectedReportType, setSelectedReportType] = useState("");
-  const reportType = [{ key: "sale", value: "sale", label: "Sale Report" }];
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [dataSource, setDataSource] = useState([]);
-  const [reportColumns, setReportColumns] = useState([]);
-  const [retrieveSaleReport] = useLazyRetrieveSaleReportQuery({
-    startDate,
-    endDate,
-  });
+  const [reportTitle, setReportTitle] = useState('Report')
+  const [selectedReportType, setSelectedReportType] = useState('')
+  const reportType = [{ key: 'sale', value: 'sale', label: 'Sale Report' }]
+  const [dates, setDates] = useState([])
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
+  const [dataSource, setDataSource] = useState([])
+  const [reportColumns, setReportColumns] = useState([])
+  const [retrieveSaleReport] = useLazyRetrieveSaleReportQuery()
 
   useEffect(() => {
-    if (selectedReportType === "sale") {
-      setReportColumns(saleReportColumn);
+    if (selectedReportType === 'sale') {
+      setReportColumns(saleReportColumn)
     }
-  }, [selectedReportType]);
+  }, [selectedReportType])
 
   const handleSearch = async () => {
-    if (selectedReportType == "sale") {
+    if (selectedReportType == 'sale') {
       const { data, isLoading } = await retrieveSaleReport({
-        startDate,
-        endDate,
-      });
+        startDate: startDate,
+        endDate: endDate
+      })
 
       if (!isLoading && data) {
-        setDataSource(data.outputData);
+        setDataSource(data.outputData)
+      } else if (!isLoading && !data) {
+        toast.error('No data!')
       }
     } else {
-      toast.error("Please select a report type.");
+      toast.error('Please select a report type.')
     }
-  };
+  }
+
+  const handleRangeChange = (value, dateStrings) => {
+    setStartDate(dateStrings[0])
+    setEndDate(dateStrings[1])
+    setDates(value)
+  }
 
   return (
     <>
@@ -53,8 +60,8 @@ const Report = () => {
               className="main-category-select"
               value={selectedReportType}
               onChange={(value, options) => {
-                setSelectedReportType(value);
-                setReportTitle(options.label);
+                setSelectedReportType(value)
+                setReportTitle(options.label)
               }}
             >
               {reportType.map((a) => {
@@ -62,11 +69,11 @@ const Report = () => {
                   <Option key={a.key} value={a.value} label={a.label}>
                     {a.label}
                   </Option>
-                );
+                )
               })}
             </Select>
             <p>Inquiry Period:</p>
-            <RangePicker format="YYYY-MM-DD" />
+            <RangePicker format="YYYY-MM-DD" value={dates} onChange={handleRangeChange} />
             <Button type="primary" onClick={handleSearch}>
               Search
             </Button>
@@ -82,7 +89,7 @@ const Report = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Report;
+export default Report
