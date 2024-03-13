@@ -1,0 +1,142 @@
+.page-description {
+  color: white;
+  font-size: 18px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.createProductMainContainer {
+  display: flex;
+  padding: 2%;
+  padding-left: 5%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.createProductMainHeader {
+  display: -webkit-box;
+  color: white;
+  font-size: 40px;
+}
+
+.createProductIcon {
+  padding-left: 5%;
+  align-self: center;
+}
+
+.product-main-block {
+  background-color: #2a2421;
+  width: 70vh;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  border-radius: 10px;
+}
+
+.btnProductSave {
+  margin-left: 75%;
+  margin-top: 3%;
+}
+
+.ant-upload {
+  color: white;
+  transition: color 0.3s;
+}
+
+.anticon {
+  color: white;
+  transition: color 0.3s;
+}
+
+.ant-upload:hover .anticon {
+  color: #1677ff;
+}
+
+.ant-upload:hover .ant-upload {
+  color: #1677ff;
+}
+
+.ant-select-disabled {
+  position: relative;
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  border-radius: 6px;
+}
+
+.product-table {
+  margin-top: 10px;
+}
+
+.new-pass-wrapper {
+  width: 100%;
+  margin-left: 10%;
+  display: block;
+}
+
+.old-pass-wrapper {
+  width: 100%;
+  margin-left: 5%;
+  display: block;
+}
+
+.conf-pass-wrapper {
+  width: 100%;
+  margin-left: 4.5%;
+  display: block;
+}
+
+.image-wrapper {
+  margin-left: 15%;
+  display: block;
+}
+
+.unit-wrapper {
+  display: flex;
+  margin-left: 17%;
+  width: 83%;
+}
+
+.product-main-block .ant-select svg {
+  color: black;
+}
+
+#add-product
+  div:nth-child(2)
+  div.ant-col.ant-form-item-control.css-dev-only-do-not-override-2i2tap
+  svg {
+  color: black;
+}
+
+#add-product
+  div:nth-child(3)
+  div.ant-col.ant-form-item-control.css-dev-only-do-not-override-2i2tap
+  svg {
+  color: black;
+}
+
+#add-product
+  div:nth-child(4)
+  div.ant-col.ant-form-item-control.css-dev-only-do-not-override-2i2tap
+  div.ant-input-number-group-addon
+  svg {
+  color: black;
+}
+
+.sell-price-wrapper {
+  display: flex;
+  margin-left: 15%;
+  width: 85%;
+}
+
+.exchange-amount:disabled {
+  width: 50%;
+  background-color: white;
+}
+
+.exchange-amount:disabled:hover {
+  width: 50%;
+  background-color: white;
+}

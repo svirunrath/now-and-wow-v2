@@ -1,0 +1,38 @@
+.barcode-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.product-barcode {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.barcode-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+}
+
+.product-name {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.product-price-select {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.product-price-select svg {
+  color: black;
+}
+
+.print-agreement {
+  margin: 40px;
+}

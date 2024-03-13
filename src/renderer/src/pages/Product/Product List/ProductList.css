@@ -1,0 +1,104 @@
+.product-list-main-container {
+  width: 100%;
+  height: 100%;
+  background: rgb(24, 24, 24);
+  padding: 10px;
+  padding-left: 80px;
+  padding-right: 80px;
+  padding-top: 50px;
+  gap: 20px;
+  align-items: center;
+}
+
+.product-list-main-header {
+  display: flex;
+  color: white;
+  font-size: 24px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.main-category {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.main-category-select {
+  width: 250px;
+}
+
+.main-category-select svg {
+  color: black;
+}
+
+.product-tabs .ant-tabs-tab {
+  color: white;
+}
+
+.new-product-card {
+  display: flex;
+  height: 300px;
+  width: 250px;
+
+  outline: 1px;
+  outline-style: dashed;
+  outline-color: black;
+  outline-offset: -3px;
+}
+
+.button-card {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  color: black;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  outline: 2px;
+  outline-color: black;
+  outline-offset: -3px;
+  outline-style: dashed;
+}
+
+.button-card svg {
+  display: flex;
+  color: black;
+}
+
+.button-card:hover svg {
+  color: blue;
+  transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.product-card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-left: 1.5%;
+}
+
+.product-pagination {
+  background-color: #2a2421;
+  border-radius: 50px;
+  text-align: end;
+  padding-right: 20px;
+  margin-top: 20px;
+}
+
+.product-pagination button span svg {
+  color: white !important;
+}
+
+.product-pagination .ant-pagination-item > a {
+  color: white !important;
+}
+
+.product-pagination .ant-pagination-item-active > a {
+  color: black !important;
+}
+
+.product-pagination .ant-pagination-item-active {
+  border-radius: 50px;
+}

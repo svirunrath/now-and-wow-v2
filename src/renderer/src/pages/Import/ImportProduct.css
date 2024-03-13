@@ -1,0 +1,90 @@
+.import-main-container {
+  display: flex;
+  padding: 2%;
+  padding-left: 5%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.import-main-header {
+  display: -webkit-box;
+  color: white;
+  font-size: 40px;
+}
+
+.import-icon {
+  padding-left: 5%;
+  align-self: center;
+}
+
+.import-tabs-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.import-tabs {
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.total-price-input {
+  color: black;
+  background-color: white;
+  border-color: white;
+}
+
+#rc-tabs-0-panel-New\ Import
+  > div
+  > div
+  > div
+  > div
+  > div
+  > div
+  > table
+  > tbody
+  > tr
+  > td:nth-child(5)
+  > div
+  > div.ant-input-number-input-wrap
+  > input {
+  font-family: bahnschrift, sans-serif !important;
+}
+
+.btn-add-product {
+  margin-bottom: 10px;
+  width: 20%;
+}
+
+.new-import-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.import-button-wrapper {
+  padding-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.import-history-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.import-range-picker {
+  margin-bottom: 10px;
+  width: 70%;
+}
+
+.import-inquiry-wrapper {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.import-main-container svg {
+  color: black;
+}
