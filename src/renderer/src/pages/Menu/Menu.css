@@ -7,6 +7,10 @@
   gap: 10px;
 }
 
+.menu-container p {
+  color: white;
+}
+
 .menu-wrapper {
   display: flex;
   flex-direction: column;
@@ -83,11 +87,7 @@
   background: blue;
   background-size: 200% 100%;
   background-position: -5% 100%;
-  background-image: linear-gradient(
-    to right,
-    rgb(245, 245, 245) 50%,
-    rgb(255, 136, 136) 50%
-  );
+  background-image: linear-gradient(to right, rgb(245, 245, 245) 50%, rgb(255, 136, 136) 50%);
   transition: background-position 0.7s ease;
   border: none;
 }
@@ -165,7 +165,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 14%;
+  height: 20%;
   background: #1c1c1c;
   border-radius: 5px;
   font-size: 15px;
@@ -185,6 +185,10 @@
   justify-content: center;
   align-items: center;
   width: 25%;
+}
+
+.menu-order-qty {
+  margin-left: 3%;
 }
 
 .menu-order-price,
@@ -245,6 +249,42 @@
   width: 100%;
   height: 25%;
   gap: 10px;
+  align-items: center;
+}
+
+.delivery-fee {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  width: 80%;
+  gap: 20px;
+}
+
+.delivery-chkbox {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-direction: row;
+  width: 30%;
+  gap: 20px;
+}
+
+.delivery-fee-input :disabled {
+  background-color: rgba(238, 237, 237, 0.973) !important;
+}
+
+.delivery-fee .ant-input-disabled {
+  background-color: rgba(238, 237, 237, 0.973) !important;
+}
+
+.delivery-fee .ant-input-disabled .ant-input-suffix {
+  background-color: rgba(238, 237, 237, 0.973) !important;
+  border-color: rgba(238, 237, 237, 0.973) !important;
+}
+
+.delivery-chkbox p {
+  width: 100% !important;
 }
 
 .menu-payment-btn-box p {
@@ -271,6 +311,7 @@
 
 .menu-modal-total {
   display: flex;
+  justify-content: space-between;
   width: 100%;
   height: 100%;
   gap: 5px;
@@ -293,6 +334,7 @@
 
 .menu-modal-total-currency {
   display: flex;
+  align-items: flex-end;
   width: 30%;
   flex-direction: column;
   gap: 1px;
@@ -304,7 +346,6 @@
 
 .menu-modal-discount-currency p {
   margin: 0;
-  color: rgb(202, 83, 83);
 } /*# sourceMappingURL=Menu.css.map */
 
 .menu-price-data .ant-select-selector {
@@ -348,7 +389,16 @@
 .menu-receipt-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
+  /* align-items: center; */
+}
+
+.shop-detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-bottom: 2px;
 }
 
 .shop-name {
@@ -356,6 +406,7 @@
   flex-direction: column;
   gap: 10px;
   align-items: center;
+  padding-bottom: 2px;
 }
 
 .shop-name h1 {
@@ -364,11 +415,13 @@
 
 .instagram {
   display: flex;
+  align-items: center;
   gap: 5px;
 }
 
 .facebook {
   display: flex;
+  align-items: center;
   gap: 5px;
 }
 
@@ -421,13 +474,14 @@
   width: 100%;
 }
 .table-order th {
-  font-size: 8px;
+  font-size: 10px;
   padding: 5px !important;
   border-bottom-color: black !important;
 }
 
 .table-order td {
-  font-size: 8px;
+  font-size: 10px;
+  font-weight: 900;
   padding: 5px !important;
 }
 
@@ -455,9 +509,32 @@
 
 @media print {
   @page {
-    size: 80mm 150mm !important;
-    margin: 0 !important;
+    size: 80mm 0mm !important;
+    size: portrait !important;
+    margin: minimum !important;
+
     padding: 0 !important;
+  }
+
+  #no-print {
+    display: none;
+  }
+
+  body {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0px !important;
+  }
+
+  h1,
+  h3 {
+    font-family: 'Gloria Hallelujah' !important;
+    font-weight: bold !important;
+  }
+
+  p {
+    font-family: 'bahnschrift' !important;
+    font-weight: bold !important;
   }
 
   header {
@@ -467,5 +544,17 @@
   h3 {
     font-size: 10px;
     font-weight: normal;
+    font-weight: bold !important;
+  }
+
+  .menu-modal-total {
+    font-family: 'bahnschrift' !important;
+    font-weight: bold !important;
+  }
+
+  th,
+  td {
+    font-family: 'bahnschrift' !important;
+    font-weight: bold !important;
   }
 }

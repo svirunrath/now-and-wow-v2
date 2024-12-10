@@ -5,7 +5,7 @@
   outline: none;
   list-style: none;
   box-sizing: none;
-  font-family: "bahnschrift", sans-serif;
+  font-family: 'bahnschrift', sans-serif;
 }
 .logo {
   display: flex;
@@ -63,7 +63,7 @@
 .ant-menu > .ant-menu-submenu-open,
 .ant-menu > .ant-menu-item-selected,
 .ant-menu > .ant-menu-submenu-selected {
-  font-family: "bahnschrift";
+  font-family: 'bahnschrift';
   font-weight: 600;
   background: #41486f;
   border-radius: 0;
@@ -76,7 +76,7 @@
 .ant-menu-dark > .ant-menu .ant-menu-submenu-open,
 .ant-menu-dark > .ant-menu .ant-menu-item-selected,
 .ant-menu-dark > .ant-menu .ant-menu-submenu-selected {
-  font-family: "bahnschrift";
+  font-family: 'bahnschrift';
   font-weight: 600;
   background: #41486f;
   border-radius: 0;

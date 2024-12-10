@@ -1,156 +1,76 @@
-.categoryMainContainer {
+.category-main-container {
   display: flex;
-  padding: 2%;
-  padding-left: 5%;
+  width: 100%;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.categoryMainHeader {
-  display: -webkit-box;
-  color: white;
+.categpry-main-header {
   font-size: 40px;
+  color: white;
 }
 
-p {
+.category-main-container p {
   color: white;
   font-size: 18px;
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
-.FormFlex {
+.body-container {
   display: flex;
-  gap: 5%;
+  width: 100%;
+  justify-content: center;
+  gap: 30px;
+  padding-top: 30px;
 }
 
-.sub-cat-form {
-  margin-top: 10px;
+.category-body {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
 .category-main-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   background-color: #2a2421;
-  width: 70vh;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  justify-content: center;
+  padding: 50px;
+  gap: 40px;
+  align-items: flex-start;
+  border-radius: 30px;
+}
+
+.main-category-input {
+  display: flex;
   align-items: center;
-  vertical-align: middle;
-  border-radius: 10px;
-  max-height: 600px;
+  width: 100%;
 }
 
-.main-cat-wrapper {
-  width: 95%;
-  margin-left: 5%;
-  display: block;
+.main-category-input label {
+  color: white;
+  font-size: 16px;
+  width: 30%;
 }
 
-.btnMainCatSave {
-  margin-left: 72%;
-  margin-top: 3%;
+.button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 10px;
 }
 
-.btnSubCatSave {
-  margin-left: 61%;
-  margin-top: 3%;
-}
-
-.ant-table-content {
-  border-radius: 0%;
-}
-.ant-table-thead {
-  border-radius: 0%;
-}
-
-.ant-table-wrapper table {
-  border-radius: 0%;
-}
-
-.ant-pagination-jump-prev,
-.ant-pagination-jump-prev-custom-icon {
-  color: black;
-  display: none;
-}
-
-.ant-pagination {
-  color: black;
-  background-color: white;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-.ant-pagination .ant-pagination-item-active {
-  background-color: white;
-  color: black;
-  border: none;
-}
-
-.ant-pagination-item-ellipsis {
+.body-container svg {
   color: black;
 }
 
-.ant-pagination
-  .ant-pagination-jump-prev
-  .ant-pagination-item-container
-  .ant-pagination-item-link-icon {
-  color: black;
-}
-
-.ant-pagination
-  .ant-pagination-jump-next
-  .ant-pagination-item-container
-  .ant-pagination-item-link-icon {
-  color: black;
-}
-.ant-pagination
-  .ant-pagination-jump-prev
-  .ant-pagination-item-container
-  .ant-pagination-item-ellipsis {
-  color: black;
-}
-.ant-pagination
-  .ant-pagination-jump-next
-  .ant-pagination-item-container
-  .ant-pagination-item-ellipsis {
-  color: black;
-}
-.ant-typography {
-  font-weight: normal;
-  font-family: "bahnschrift", sans-serif;
-}
-.ant-pagination .ant-pagination-item a {
-  color: black;
-}
-
-.ant-pagination .ant-pagination-item-active a {
-  color: black;
-}
-.ant-pagination .ant-pagination-item-hover a {
-  color: black;
-}
-.ant-pagination.ant-pagination-simple .ant-pagination-simple-pager input {
-  color: black;
-}
-
-.ant-table-wrapper .ant-table-pagination.ant-pagination {
-  margin-top: 0%;
-}
-
-.ant-table-wrapper .ant-table-pagination.ant-pagination {
-  margin: 0%;
-}
-
-.ant-pagination .ant-pagination-disabled svg {
-  color: black;
-}
-
-.ant-pagination svg {
-  color: black;
-}
-
-#main-Category > div > span > span > svg {
-  color: black;
+.body-container .ant-pagination {
+  margin: 0px !important;
+  padding: 16px !important;
+  background-color: white !important;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
 }

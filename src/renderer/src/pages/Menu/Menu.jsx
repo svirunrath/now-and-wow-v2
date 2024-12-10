@@ -1,5 +1,5 @@
-import React from "react";
-import { useState, useEffect, useRef } from "react";
+import React from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Button,
   Flex,
@@ -10,76 +10,77 @@ import {
   Space,
   Divider,
   Table,
-} from "antd";
-import { Carousel } from "antd";
-import "./Menu.css";
-import MenuOrder from "./MenuOrder";
-import Scrollbars from "react-custom-scrollbars-2";
-import { Input } from "antd";
-import MenuCat from "./MenuCat";
+  Popconfirm,
+  Checkbox
+} from 'antd'
+import { QuestionCircleOutlined } from '@ant-design/icons'
+import { Carousel } from 'antd'
+import './Menu.css'
+import MenuOrder from './MenuOrder'
+import Scrollbars from 'react-custom-scrollbars-2'
+import { Input } from 'antd'
+import MenuCat from './MenuCat'
 import {
   PlusOutlined,
   InstagramOutlined,
   FacebookOutlined,
   PhoneOutlined,
-  PrinterOutlined,
-} from "@ant-design/icons";
-import MenuItem from "./MenuItem";
-import { useGetMainCategoryQuery } from "../../slices/mainCategoryAPISlices";
-import { useGetProductCountBySubIdQuery } from "../../slices/subCategoryAPISlices";
-import {
-  useGetAllProductQuery,
-  useGetProductBySubIdQuery,
-} from "../../slices/productAPISlices";
-import ReactToPrint from "react-to-print";
-import { toast } from "react-toastify";
-import {
-  CommaFormatted,
-  CurrencyFormatted,
-} from "../../utils/NumberFormatterUtils.js";
-import { useLazyRetrieveProductByBarcodeQuery } from "../../slices/barcodeSlices.js";
-import { useRegisterSaleMutation } from "../../slices/saleSlices.js";
-import {
-  useUpdateStockDetailByProductIdAndPriceIdMutation,
-  useUpdateStockMasterByProductIdMutation,
-} from "../../slices/stockSlices.js";
-//**** NOTE: I have not made color transition of selected category as im still looking for the solution.
-// It wont make transition on page 2 of carousel which is super annoying
-const { Option } = Select;
-
-//**** NOTE: I have not made color transition of selected category as im still looking for the solution.
-// It wont make transition on page 2 of carousel which is super annoying
+  PrinterOutlined
+} from '@ant-design/icons'
+import MenuItem from './MenuItem'
+import { useGetMainCategoryQuery } from '../../slices/mainCategoryAPISlices'
+import { useGetProductCountBySubIdQuery } from '../../slices/subCategoryAPISlices'
+import { useGetAllProductQuery } from '../../slices/productAPISlices'
+import ReactToPrint from 'react-to-print'
+import { toast } from 'react-toastify'
+import { CommaFormatted, CurrencyFormatted } from '../../utils/NumberFormatterUtils.js'
+import { useLazyRetrieveProductByBarcodeQuery } from '../../slices/barcodeSlices.js'
+import { useRegisterSaleMutation, useRetrieveLastSaleIdQuery } from '../../slices/saleSlices.js'
+import path from 'path'
+const __dirname = path.resolve(path.dirname(''))
+const { Option } = Select
 
 const Menu = () => {
-  const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-  const ref = useRef();
+  const userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+  const ref = useRef()
   //Main Category Select
   const {
     data: category_data,
     isLoading: category_isLoading,
-    refetch: category_refetch,
-  } = useGetMainCategoryQuery();
-  const [mainId, setMainId] = useState("ALL");
-  const [subId, setSubId] = useState(null);
-  const [showProduct, setShowProduct] = useState(false);
-  const exchangeRate = localStorage.getItem("exchangeRate");
-  let currentDate = new Date();
-  let currDate = currentDate.toDateString();
-  let currTime = new Date().toLocaleTimeString();
+    refetch: category_refetch
+  } = useGetMainCategoryQuery()
+  const [mainId, setMainId] = useState('ALL')
+  const [subId, setSubId] = useState(null)
+  const [showProduct, setShowProduct] = useState(false)
+  const exchangeRate = localStorage.getItem('exchangeRate')
+  const [receiptId, setReceiptId] = useState('')
+  const [isFreeDelivery, setIsFreeDelivery] = useState(false)
+  let currentDate = new Date()
+  let currDate = currentDate.toDateString()
+  let currTime = new Date().toLocaleTimeString()
+  const [registerSale] = useRegisterSaleMutation()
+  const {
+    data: saleId,
+    isLoading: saleIdLoading,
+    refetch: saleIdRefetch
+  } = useRetrieveLastSaleIdQuery()
+
+  useEffect(() => {
+    console.log(saleId)
+    if (!saleIdLoading) setReceiptId(saleId.sale[0].sale_id)
+  }, [saleId])
 
   const {
     data: product_data,
     isLoading: product_isLoading,
-    refetch: product_refetch,
-  } = useGetAllProductQuery();
+    refetch: product_refetch
+  } = useGetAllProductQuery()
 
-  const [productData, setProductData] = useState([]);
-  let main_category = [];
+  const [productData, setProductData] = useState([])
+  let main_category = []
 
   if (!category_isLoading) {
-    const response_main_category = category_data
-      ? category_data.main_category
-      : null;
+    const response_main_category = category_data ? category_data.main_category : null
 
     for (let i = 0; i < response_main_category.length; i++) {
       main_category.push(
@@ -89,35 +90,34 @@ const Menu = () => {
         >
           {response_main_category[i].category_name}
         </Option>
-      );
+      )
     }
   }
 
   //Sub category card
-  const [menuItem, setMenuItem] = useState([]);
-  const [tempData, setTempData] = useState([]);
-  let childrenList = [];
-  let sub_category = [];
+  const [menuItem, setMenuItem] = useState([])
+  let childrenList = []
+  let sub_category = []
 
-  if (mainId === "ALL") {
+  if (mainId === 'ALL') {
     const {
       data: sub_data,
       isLoading: sub_isLoading,
-      refetch: sub_refetch,
-    } = useGetProductCountBySubIdQuery({ category_id: 0 });
+      refetch: sub_refetch
+    } = useGetProductCountBySubIdQuery({ category_id: 0 })
 
     if (!sub_isLoading) {
-      sub_category = sub_data.sub_category;
+      sub_category = sub_data.sub_category
     }
   } else {
     const {
       data: sub_data,
       isLoading: sub_isLoading,
-      refetch: sub_refetch,
-    } = useGetProductCountBySubIdQuery({ category_id: mainId });
+      refetch: sub_refetch
+    } = useGetProductCountBySubIdQuery({ category_id: mainId })
 
     if (!sub_isLoading) {
-      sub_category = sub_data.sub_category;
+      sub_category = sub_data.sub_category
     }
   }
 
@@ -126,465 +126,387 @@ const Menu = () => {
       childrenList.push({
         id: sub_category[i].sub_category_id,
         name: sub_category[i].sub_category_name,
-        isSelected: "menu-cat-main-card",
-        item: sub_category[i].product_count,
-      });
+        isSelected: 'menu-cat-main-card',
+        item: sub_category[i].product_count ? sub_category[i].product_count : '0'
+      })
     }
   }
 
   useEffect(() => {
     if (!product_isLoading && product_data) {
-      setProductData(product_data.products);
+      setProductData(product_data.products)
     }
-  }, [product_data]);
+  }, [product_data])
 
   useEffect(() => {
     if (sub_category.length > 0) {
-      setMenuItem(childrenList);
+      setMenuItem(childrenList)
     }
-  }, [sub_category]);
+  }, [sub_category])
 
   //Select Product
   function changeMenuItem(id) {
-    setShowProduct(true);
-    const newProductData = [...menuItem];
-    const Item = newProductData.find((Item) => Item.id === id);
+    setShowProduct(true)
+    const newProductData = [...menuItem]
+    const Item = newProductData.find((Item) => Item.id === id)
 
     for (let i = 0; i < newProductData.length; i++) {
       if (newProductData[i].id !== Item.id) {
-        newProductData[i].isSelected = "menu-cat-main-card";
+        newProductData[i].isSelected = 'menu-cat-main-card'
       } else {
-        newProductData[i].isSelected =
-          "menu-cat-main-card menu-cat-main-card-active";
+        newProductData[i].isSelected = 'menu-cat-main-card menu-cat-main-card-active'
       }
     }
-    setMenuItem(newProductData);
-    setSubId(id);
+    setMenuItem(newProductData)
+    setSubId(id)
   }
 
   //Order
-  const [order, setOrder] = useState([]);
-  const [isChange, setIsChange] = useState(false);
+  const [order, setOrder] = useState([])
 
-  useEffect(() => {
-    if (productData.length > 0 && order.length === 0 && tempData.length === 0) {
-      for (let i = 0; i < productData.length; i++) {
-        tempData.push({
-          category_id: productData[i].category_id,
-          image_path: productData[i].image_path,
-          max_product_sell_price: Number(
-            productData[i].max_product_sell_price
-          ).toFixed(2),
-          min_product_sell_price: Number(
-            productData[i].min_product_sell_price
-          ).toFixed(2),
-          product_id: productData[i].product_id,
-          product_name: productData[i].product_name,
-          product_qty: productData[i].product_qty,
-          sub_category_id: productData[i].sub_category_id,
-          sub_category_name: productData[i].sub_category_name,
-          unit_id: productData[i].unit_id,
-          unit_name: productData[i].unit_name,
-        });
-      }
-    }
-  }, [productData]);
-
-  function increment({ product_id, price_id, product_sell_price }) {
-    let error = false;
-    let itemIndex = tempData.findIndex(
-      (item) => item.product_id === product_id
-    );
-
-    let tempOrder = order;
-    const item = productData.find((item) => item.product_id === product_id);
-    if (item.product_qty > 0) {
-      if (tempOrder.length == 0 && !price_id) {
-        tempOrder.push({
-          discount: 0,
-          product_id: item.product_id,
-          product_name: item.product_name,
-          product_qty: 1,
-          price_id: 0,
-          product_sell_price: 0,
-          total_price: 0,
-        });
-        error = false;
-      } else if (tempOrder.length == 0 && price_id) {
-        tempOrder.push({
-          discount: 0,
-          product_id: item.product_id,
-          product_name: item.product_name,
-          product_qty: 1,
-          price_id: price_id,
-          product_sell_price: Number(product_sell_price),
-          total_price: Number(product_sell_price),
-        });
-      } else {
-        const containsdata = tempOrder.some(
-          (order) =>
-            order.product_id === product_id && order.price_id === price_id
-        );
-
-        if (containsdata) {
-          let index = tempOrder.findIndex(
-            (order) =>
-              order.product_id === product_id && order.price_id === price_id
-          );
-          tempOrder[index].product_qty =
-            Number(tempOrder[index].product_qty) + 1;
-          error = false;
-        } else {
-          if (order[order.length - 1].price_id === 0) {
-            toast.error("Please select price for the previous item first.");
-            error = true;
-          } else {
-            if (price_id > 0) {
-              tempOrder.push({
-                discount: 0,
-                product_id: item.product_id,
-                product_name: item.product_name,
-                product_qty: 1,
-                price_id: price_id,
-                product_sell_price: Number(product_sell_price),
-                total_price: Number(product_sell_price),
-              });
-              error = false;
-            } else {
-              tempOrder.push({
-                discount: 0,
-                product_id: item.product_id,
-                product_name: item.product_name,
-                product_qty: 1,
-                price_id: 0,
-                product_sell_price: 0,
-                total_price: 0,
-              });
-              error = false;
-            }
-          }
-        }
-      }
-
-      if (!error) {
-        setOrder([...tempOrder]);
-        tempData[itemIndex].product_qty = tempData[itemIndex].product_qty - 1;
-        setProductData([...tempData]);
-      }
-    }
-  }
-
-  function decrement({ product_id, price_id }) {
-    const item = productData.find((item) => item.product_id === product_id);
-    let itemIndex = tempData.findIndex(
-      (item) => item.product_id === product_id
-    );
-    let orderArr = order;
-    let index = orderArr.findIndex(
-      (orderArr) => orderArr.product_id == product_id
-    );
-
-    if (item.product_qty > 0) {
-      orderArr[index].product_qty = Number(order[index].product_qty) - 1;
-
-      if (orderArr[index].product_qty == 0) {
-        orderArr.splice(index, 1);
-      }
-      setOrder([...orderArr]);
-      tempData[itemIndex].product_qty = tempData[itemIndex].product_qty + 1;
-      setProductData([...tempData]);
-    } else {
-      toast.error("Cannot decrease more than product's stock quantity.");
-    }
-  }
-
-  function orderDelete({ product_id, price_id }) {
-    let itemIndex = tempData.findIndex(
-      (item) => item.product_id === product_id
-    );
-
-    const item = order.find(
-      (item) => item.product_id === product_id && item.price_id === price_id
-    );
-
-    const orderIndex = order.findIndex(
-      (item) => item.product_id === product_id && item.price_id === price_id
-    );
-
-    tempData[itemIndex].product_qty =
-      tempData[itemIndex].product_qty + item.product_qty;
-    setProductData([...tempData]);
-    order[orderIndex].product_qty = 0;
-    setOrder(order.filter((o) => o.product_qty != 0));
-  }
+  const [isChange, setIsChange] = useState(false)
 
   useEffect(() => {
     if (isChange) {
-      setOrder(mergeObjectsInUnique(order, "price_id"));
+      setOrder(mergeObjectsInUnique(order, 'import_detail_id'))
     }
-    setIsChange(false);
-  }, [isChange]);
+    setIsChange(false)
+  }, [isChange])
 
   //Customer Information
-  const [customerName, setCustomerName] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [customerLoc, setCustomerLoc] = useState("");
+  const [customerName, setCustomerName] = useState('')
+  const [customerPhone, setCustomerPhone] = useState('')
+  const [customerLoc, setCustomerLoc] = useState('')
 
   //Handle Barcode
-  const [enterBarcodeValue, setEnterBarcodeValue] = useState("");
-  const [trigger] = useLazyRetrieveProductByBarcodeQuery();
+  const [enterBarcodeValue, setEnterBarcodeValue] = useState('')
+  const [trigger] = useLazyRetrieveProductByBarcodeQuery()
 
   const handleAddBarcode = async () => {
     const { data, isLoading } = await trigger({
-      barcode_value: enterBarcodeValue,
-    });
+      barcode_value: enterBarcodeValue
+    })
 
     if (!isLoading) {
       if (data.barcode.length > 0) {
-        await increment({
-          product_id: data.barcode[0].product_id,
-          price_id: data.barcode[0].price_id,
-          product_sell_price: data.barcode[0].product_sell_price,
-        });
+        let tempOrder = [...order]
+        let isExisted = tempOrder.find(
+          (item) => item.barcode_value == data.barcode[0].barcode_value
+        )
+
+        if (data.barcode[0].product_qty <= 0) {
+          toast.error('Product is out of stock.')
+          return
+        }
+
+        if (!isExisted) {
+          tempOrder.push({
+            barcode_value: data.barcode[0].barcode_value,
+            discount: 0,
+            product_id: data.barcode[0].product_id,
+            product_name: data.barcode[0].product_name,
+            product_qty: 1,
+            import_detail_id: data.barcode[0].import_detail_id
+              ? data.barcode[0].import_detail_id
+              : null,
+            product_sell_price: Number(data.barcode[0].product_sell_price),
+            sub_category_id: data.barcode[0].sub_category_id,
+            total_price: Number(data.barcode[0].product_sell_price),
+            stock_qty: Number(data.barcode[0].product_qty)
+          })
+        } else {
+          let index = tempOrder.findIndex((item) => item.barcode_value == isExisted.barcode_value)
+
+          tempOrder[index].product_qty = Number(tempOrder[index].product_qty) + 1
+        }
+        await setOrder(tempOrder)
         //setIsScan(false);
-        setEnterBarcodeValue("");
+        setEnterBarcodeValue('')
       } else {
-        toast.error("No Product Found.");
+        toast.error('No Product Found.')
       }
     }
-  };
+  }
+
+  function orderDelete({ import_detail_id }) {
+    let tempOrder = [...order]
+
+    tempOrder = tempOrder.filter((item) => item.import_detail_id != import_detail_id)
+
+    setOrder(tempOrder)
+  }
 
   //Barcode
-  const [barcodeValue, setBarcodeValue] = useState("");
-  const [isScan, setIsScan] = useState(false);
+  const [barcodeValue, setBarcodeValue] = useState('')
+  const [isScan, setIsScan] = useState(false)
 
   const barcode = {
     timing: 1000,
-    data: "",
-  };
+    data: ''
+  }
 
   const barcodeReaded = () => {
     if (barcode.data.length > 1) {
-      setBarcodeValue(barcode.data.padStart(12, "0"));
-      setIsScan(true);
+      setBarcodeValue(barcode.data.padStart(12, '0'))
+      setIsScan(true)
     } else {
-      barcode.data = "";
-      setBarcodeValue("");
-      setIsScan(false);
+      barcode.data = ''
+      setBarcodeValue('')
+      setIsScan(false)
     }
-  };
+  }
 
-  let timeout = setTimeout(barcodeReaded, 500);
+  let timeout = setTimeout(barcodeReaded, 500)
 
   useEffect(() => {
-    window.addEventListener("keypress", (e) => {
+    window.addEventListener('keypress', (e) => {
       if (barcode.data.length === 0 || e.timeStamp - barcode.timing < 35) {
-        if (e.key !== "Enter") {
-          barcode.data += e.key;
+        if (e.key !== 'Enter') {
+          barcode.data += e.key
         }
-        barcode.timing = e.timeStamp;
-        clearTimeout(timeout);
-        timeout = setTimeout(barcodeReaded, 500);
+        barcode.timing = e.timeStamp
+        clearTimeout(timeout)
+        timeout = setTimeout(barcodeReaded, 500)
       } else {
-        barcode.data = "";
-        setBarcodeValue("");
-        setIsScan(false);
+        barcode.data = ''
+        setBarcodeValue('')
+        setIsScan(false)
       }
-    });
-  }, []);
+    })
+  }, [])
 
   useEffect(() => {
     async function handleBarcode() {
       if (isScan) {
         const { data, isLoading } = await trigger({
-          barcode_value: barcodeValue,
-        });
+          barcode_value: barcodeValue
+        })
 
         if (!isLoading) {
           if (data.barcode.length > 0) {
-            await increment({
-              product_id: data.barcode[0].product_id,
-              price_id: data.barcode[0].price_id,
-              product_sell_price: data.barcode[0].product_sell_price,
-            });
-            setIsScan(false);
-            barcode.data = "";
-            setBarcodeValue("");
+            let tempOrder = [...order]
+            let isExisted = tempOrder.find(
+              (item) => item.barcode_value == data.barcode[0].barcode_value
+            )
+
+            if (data.barcode[0].product_qty <= 0) {
+              toast.error('Product is out of stock.')
+              return
+            }
+
+            if (!isExisted) {
+              tempOrder.push({
+                barcode_value: data.barcode[0].barcode_value,
+                discount: 0,
+                product_id: data.barcode[0].product_id,
+                product_name: data.barcode[0].product_name,
+                product_qty: 1,
+                import_detail_id: data.barcode[0].import_detail_id
+                  ? data.barcode[0].import_detail_id
+                  : null,
+                product_sell_price: Number(data.barcode[0].product_sell_price),
+                sub_category_id: data.barcode[0].sub_category_id,
+                total_price: Number(data.barcode[0].product_sell_price),
+                stock_qty: Number(data.barcode[0].product_qty)
+              })
+            } else {
+              let index = tempOrder.findIndex(
+                (item) => item.barcode_value == isExisted.barcode_value
+              )
+
+              tempOrder[index].product_qty = Number(tempOrder[index].product_qty) + 1
+            }
+
+            await setOrder(tempOrder)
+            setIsScan(false)
+            barcode.data = ''
+            setBarcodeValue('')
           } else {
-            toast.error("No Product Found.");
+            toast.error('No Product Found.')
           }
         }
       }
     }
 
-    handleBarcode();
-  }, [barcodeValue]);
+    handleBarcode()
+  }, [barcodeValue])
 
   //Calculate
-  let subTotalUsd = 0;
-  let subTotalKhr = 0;
-  let [discount, setDiscount] = useState(0);
-  let [discountType, setDiscountType] = useState("percentage");
-  let individualDis = 0;
-  let groupDis = 0;
-  let discountUsd = 0;
-  let discountKhr = 0;
-  let totalUsd = 0;
-  let totalKhr = 0;
+  let subTotalUsd = 0
+  let subTotalKhr = 0
+  let [discount, setDiscount] = useState(0)
+  let [discountType, setDiscountType] = useState('percentage')
+  let groupDis = 0
+  let discountUsd = 0
+  let discountKhr = 0
+  let totalUsd = 0
+  let totalKhr = 0
 
-  let changeUsd = 0;
-  let changeKhr = 0;
-  let [receivedUsd, setReceivedUsd] = useState(0);
-  let [receivedKhr, setReceivedKhr] = useState(0);
-  let [deliveryFee, setDeliveryFee] = useState(0);
-  let totalReceivedAmt = 0;
+  let changeUsd = 0
+  let changeKhr = 0
+  let [receivedUsd, setReceivedUsd] = useState(0)
+  let [receivedKhr, setReceivedKhr] = useState(0)
+  let [deliveryFee, setDeliveryFee] = useState(0)
+  let totalReceivedAmt = 0
 
   //Sub-Total
   order.forEach((item) => {
-    subTotalUsd += item.total_price;
-  });
-  subTotalKhr = subTotalUsd * exchangeRate;
+    subTotalUsd += item.total_price
+  })
+  subTotalKhr = subTotalUsd * exchangeRate
 
   //Discount
-  groupDis =
-    discountType === "percentage" ? (subTotalUsd * discount) / 100 : discount;
-  discountUsd = groupDis;
-  discountKhr = discountUsd * exchangeRate;
+  groupDis = discountType === 'percentage' ? (subTotalUsd * discount) / 100 : discount
+  discountUsd = groupDis
+  discountKhr = discountUsd * exchangeRate
 
   //Total
-  totalUsd = subTotalUsd + Number(deliveryFee) - discountUsd;
-  totalKhr = totalUsd * exchangeRate;
+  totalUsd = subTotalUsd + Number(deliveryFee) - discountUsd
+  totalKhr = totalUsd * exchangeRate
 
-  totalReceivedAmt =
-    Number(receivedUsd) + Number(receivedKhr) / Number(exchangeRate);
-  changeUsd = totalUsd - totalReceivedAmt;
-  changeKhr = changeUsd * exchangeRate;
+  totalReceivedAmt = Number(receivedUsd) + Number(receivedKhr) / Number(exchangeRate)
+  changeUsd = totalUsd - totalReceivedAmt
+  changeKhr = changeUsd * exchangeRate
 
   //table receipt
   const receiptColumn = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name'
     },
     {
-      title: "Qty",
-      dataIndex: "quantity",
-      key: "qty",
+      title: 'Qty',
+      dataIndex: 'quantity',
+      key: 'qty'
     },
     {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price'
     },
     {
-      title: "Discount",
-      dataIndex: "discount",
-      key: "discount",
+      title: 'Discount',
+      dataIndex: 'discount',
+      key: 'discount'
     },
     {
-      title: "Total",
-      dataIndex: "total",
-      key: "total",
-    },
-  ];
+      title: 'Total',
+      dataIndex: 'total',
+      key: 'total'
+    }
+  ]
 
-  const [receiptOrder, setReceiptOrder] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [registerSale] = useRegisterSaleMutation();
-  const [updateStockMaster] = useUpdateStockMasterByProductIdMutation();
-  const [updateStockDetail] =
-    useUpdateStockDetailByProductIdAndPriceIdMutation();
+  const [receiptOrder, setReceiptOrder] = useState([])
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    const tempArr = [];
+    const tempArr = []
     if (order.length > 0) {
       for (let i = 0; i < order.length; i++) {
         tempArr.push({
           name: order[i].product_name,
           quantity: order[i].product_qty,
-          price:
-            "$ " +
-            CommaFormatted(CurrencyFormatted(order[i].product_sell_price)),
-          discount: "$ " + CommaFormatted(CurrencyFormatted(order[i].discount)),
-          total: "$ " + CommaFormatted(CurrencyFormatted(order[i].total_price)),
-        });
+          price: '$ ' + Number(order[i].product_sell_price).toFixed(2),
+          discount: '$ ' + Number(order[i].discount).toFixed(2),
+          total: '$ ' + Number(order[i].total_price).toFixed(2)
+        })
       }
-      setReceiptOrder(tempArr);
+      setReceiptOrder(tempArr)
     }
-  }, [order]);
+  }, [order])
 
   const handleRegisterTable = async () => {
     try {
+      let outputData = {}
       if (order.length === 0) {
-        toast.error("There is no order to print.");
+        toast.error('There is no order to print.')
+        return
       } else {
         const req = {
-          sale_date: currentDate.toLocaleDateString("en-GB"),
-          sale_price: subTotalUsd,
-          sale_discount: discountUsd,
-          sale_total_price: totalUsd,
-          received_payment: Number(totalReceivedAmt),
-          payment_remaining: changeUsd <= 0 ? 0 : changeUsd,
+          sale_price: Number(subTotalUsd).toFixed(2),
+          sale_discount: Number(discountUsd).toFixed(2),
+          sale_total_price: Number(totalUsd).toFixed(2),
+          received_payment: Number(totalReceivedAmt).toFixed(2),
+          payment_remaining: Number(changeUsd).toFixed(2),
           exch_rate: exchangeRate,
-          created_by: userInfo.username,
           customer_name: customerName,
           customer_location: customerLoc,
           customer_phone: customerPhone,
+          delivery_fee: Number(deliveryFee).toFixed(2),
+          created_by: userInfo.username,
           sale_time: currTime,
-          delivery_fee: deliveryFee,
-          orders: order,
-        };
-
-        order.forEach(async (order) => {
-          const mStockReq = {
-            product_id: order.product_id,
-            product_qty: -1 * Number(order.product_qty),
-          };
-
-          await updateStockMaster(mStockReq).unwrap();
-
-          const dStockReq = {
-            product_id: order.product_id,
-            price_id: order.price_id,
-            product_qty: -1 * Number(order.product_qty),
-          };
-
-          await updateStockDetail(dStockReq).unwrap();
-        });
-
-        const res = await registerSale(req).unwrap();
-
-        if (res) {
-          setBarcodeValue("");
-          setCustomerLoc("");
-          setCustomerName("");
-          setCustomerPhone("");
-          setDiscount(0);
-          setDeliveryFee(0);
-          setDiscountType("percentage");
-          setEnterBarcodeValue("");
-          setIsChange(false);
-          setIsScan(false);
-          setOpen(false);
-          setOrder([]);
-          setReceiptOrder([]);
-          setReceivedUsd(0);
-          setReceivedKhr(0);
-          toast.success(res.message);
+          is_delivery_free: isFreeDelivery,
+          orders: order
         }
+
+        outputData = await registerSale(req).unwrap()
+      }
+
+      if (outputData.body.success) {
+        toast.success('Registered Sale Successfully.')
+        setBarcodeValue('')
+        setCustomerLoc('')
+        setCustomerName('')
+        setCustomerPhone('')
+        setDiscount(0)
+        setDeliveryFee(0)
+        setDiscountType('percentage')
+        setEnterBarcodeValue('')
+        setIsChange(false)
+        setIsScan(false)
+        setOpen(false)
+        setShowProduct(false)
+        setMainId('ALL')
+        setOrder([])
+        setProductData([])
+        setSubId(null)
+        setReceiptOrder([])
+        setReceivedUsd(0)
+        setReceivedKhr(0)
+        setIsFreeDelivery(false)
+        saleIdRefetch()
+        product_refetch()
+      } else {
+        toast.error('Registered sale failed.')
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message)
+      return
     }
-  };
+  }
+
+  const handleClear = () => {
+    setBarcodeValue('')
+    setCustomerLoc('')
+    setCustomerName('')
+    setCustomerPhone('')
+    setDiscount(0)
+    setDeliveryFee(0)
+    setDiscountType('percentage')
+    setEnterBarcodeValue('')
+    setIsChange(false)
+    setIsScan(false)
+    setOpen(false)
+    setShowProduct(false)
+    setMainId('ALL')
+    setOrder([])
+    setProductData([])
+    setSubId(null)
+    setReceiptOrder([])
+    setReceivedUsd(0)
+    setReceivedKhr(0)
+    saleIdRefetch()
+    setIsFreeDelivery(false)
+    product_refetch()
+  }
 
   const pageStyle = `
   @page {
     size: 80mm 50mm !important;
     margin: 0.5px !important;
   }
-`;
+`
 
   return (
     <>
@@ -592,12 +514,12 @@ const Menu = () => {
         <div className="menu-cat-wrapper menu-wrapper">
           <div className="menu-cat-header menu-cat-el">
             <div className="menu-select">
-              <h3 style={{ color: "white" }}>Main Category:</h3>
+              <h3 style={{ color: 'white' }}>Main Category:</h3>
               <Select
                 className="menu-main-select"
                 onChange={(value) => {
-                  setMainId(value);
-                  setSubId(null);
+                  setMainId(value)
+                  setSubId(null)
                 }}
                 value={mainId}
               >
@@ -608,16 +530,13 @@ const Menu = () => {
               </Select>
             </div>
             <div className="menu-code">
-              <h3 style={{ color: "white" }}>Product Code</h3>
+              <h3 style={{ color: 'white' }}>Product Code</h3>
               <Input
-                style={{ width: "50%" }}
+                style={{ width: '50%' }}
                 value={enterBarcodeValue}
                 onChange={(e) => setEnterBarcodeValue(e.target.value)}
               ></Input>
-              <Button
-                icon={<PlusOutlined />}
-                onClick={handleAddBarcode}
-              ></Button>
+              <Button icon={<PlusOutlined />} onClick={handleAddBarcode}></Button>
             </div>
           </div>
           <div className="menu-cat-main menu-cat-el">
@@ -627,7 +546,7 @@ const Menu = () => {
                 rows={2}
                 slidesPerRow={4}
                 draggable
-                dots={{ className: "menu-slider-dots" }}
+                dots={{ className: 'menu-slider-dots' }}
                 speed={800}
               >
                 {menuItem.map((a) => (
@@ -647,7 +566,7 @@ const Menu = () => {
               {showProduct == false ? (
                 <Empty
                   imageStyle={{ opacity: 0.2 }}
-                  description={<span style={{ color: "white" }}>No data</span>}
+                  description={<span style={{ color: 'white' }}>No data</span>}
                 />
               ) : (
                 // we need to setProduct() according to Category list.
@@ -656,7 +575,7 @@ const Menu = () => {
                   rows={2}
                   slidesPerRow={4}
                   draggable
-                  dots={{ className: "menu-slider-dots" }}
+                  dots={{ className: 'menu-slider-dots' }}
                   speed={800}
                 >
                   {!product_isLoading
@@ -664,19 +583,7 @@ const Menu = () => {
                         .filter((product) => product.sub_category_id === subId)
                         .map((a) => (
                           <div>
-                            <MenuCat
-                              key={a.product_id}
-                              setProductArray={a}
-                              orderDecrement={() =>
-                                decrement({
-                                  product_id: a.product_id,
-                                  price_id: a.price_id,
-                                })
-                              }
-                              orderIncrement={() =>
-                                increment({ product_id: a.product_id })
-                              }
-                            />
+                            <MenuCat key={a.product_id} setProductArray={a} />
                           </div>
                         ))
                     : null}
@@ -688,33 +595,33 @@ const Menu = () => {
         <div className="menu-order-wrapper menu-wrapper">
           <div className=" menu-order-el menu-order-header">
             <div className="menu-order-name-box1">
-              <p style={{ fontSize: "12px" }} className="menu-order-name">
-                Customer Name:{" "}
+              <p style={{ fontSize: '12px' }} className="menu-order-name">
+                Customer Name:{' '}
               </p>
               <Input
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                style={{ height: "100%", width: "80%" }}
+                style={{ height: '100%', width: '80%' }}
               ></Input>
             </div>
             <div className="menu-order-name-box1">
-              <p style={{ fontSize: "12px" }} className="menu-order-name">
-                Customer Phone:{" "}
+              <p style={{ fontSize: '12px' }} className="menu-order-name">
+                Customer Phone:{' '}
               </p>
               <Input
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
-                style={{ height: "100%", width: "80%" }}
+                style={{ height: '100%', width: '80%' }}
               ></Input>
             </div>
             <div className="menu-order-name-box1">
-              <p style={{ fontSize: "12px" }} className="menu-order-name">
-                Customer Location:{" "}
+              <p style={{ fontSize: '12px' }} className="menu-order-name">
+                Customer Location:{' '}
               </p>
               <Input
                 value={customerLoc}
                 onChange={(e) => setCustomerLoc(e.target.value)}
-                style={{ height: "100%", width: "80%" }}
+                style={{ height: '100%', width: '80%' }}
               ></Input>
             </div>
           </div>
@@ -725,12 +632,12 @@ const Menu = () => {
                 {...props}
                 style={{
                   ...style,
-                  backgroundColor: "#2d2e31",
-                  right: "0px",
-                  bottom: "0px",
-                  top: "0px",
-                  width: "5px",
-                  borderRadius: 2,
+                  backgroundColor: '#2d2e31',
+                  right: '0px',
+                  bottom: '0px',
+                  top: '0px',
+                  width: '5px',
+                  borderRadius: 2
                 }}
               />
             )}
@@ -739,11 +646,11 @@ const Menu = () => {
                 {...props}
                 style={{
                   ...style,
-                  width: "20px",
+                  width: '20px',
                   height: 2,
-                  borderRadius: "3px",
-                  boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.16)",
-                  backgroundColor: "#41486f",
+                  borderRadius: '3px',
+                  boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.16)',
+                  backgroundColor: '#41486f'
                 }}
               />
             )}
@@ -754,20 +661,10 @@ const Menu = () => {
                 .map((newOrderData) => (
                   <MenuOrder
                     orderData={newOrderData}
-                    handleDecrement={() =>
-                      decrement({
-                        product_id: newOrderData.product_id,
-                        price_id: newOrderData.price_id,
-                      })
-                    }
                     setDeleteOrder={() =>
                       orderDelete({
-                        product_id: newOrderData.product_id,
-                        price_id: newOrderData.price_id,
+                        import_detail_id: newOrderData.import_detail_id
                       })
-                    }
-                    setOrderDiscount={(e) =>
-                      discountEach(neworderdata.product_id, e.target.value)
                     }
                     setIsChange={setIsChange}
                   />
@@ -785,7 +682,7 @@ const Menu = () => {
               </div>
               <Flex className="menu-payment-btn-box">
                 <p>Discount:</p>
-                <div style={{ display: "flex", width: "100%" }}>
+                <div style={{ display: 'flex', width: '100%' }}>
                   <Input
                     placeholder="0"
                     type="number"
@@ -794,16 +691,16 @@ const Menu = () => {
                     onChange={(e) => setDiscount(e.target.value)}
                     style={{
                       fontSize: 15,
-                      fontWeight: "bold",
-                      width: "100%",
-                      borderTopRightRadius: "0",
-                      borderBottomRightRadius: "0",
+                      fontWeight: 'bold',
+                      width: '100%',
+                      borderTopRightRadius: '0',
+                      borderBottomRightRadius: '0'
                     }}
                   />
                   <Select
                     style={{
-                      height: "100%",
-                      width: "70px",
+                      height: '100%',
+                      width: '70px'
                     }}
                     suffixIcon={null}
                     value={discountType}
@@ -820,21 +717,37 @@ const Menu = () => {
                 </div>
               </Flex>
               <Flex className="menu-payment-btn-box">
-                <p>Delivery:</p>
-                <Input
-                  placeholder="0"
-                  type="number"
-                  id="totalDiscount"
-                  value={deliveryFee}
-                  onChange={(e) => setDeliveryFee(e.target.value)}
-                  suffix={"$"}
-                  style={{
-                    fontSize: 15,
-                    fontWeight: "bold",
-                    width: "100%",
-                    textAlign: "center",
-                  }}
-                />
+                <div className="delivery-fee">
+                  <p>Delivery:</p>
+                  <Input
+                    placeholder="0"
+                    type="number"
+                    id="totalDiscount"
+                    className="delivery-fee-input"
+                    disabled={isFreeDelivery}
+                    value={deliveryFee}
+                    onChange={(e) => setDeliveryFee(e.target.value)}
+                    suffix={'$'}
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 'bold',
+                      width: '60%',
+                      textAlign: 'center'
+                    }}
+                  />
+                </div>
+                <div className="delivery-chkbox">
+                  <p width="100%">Free Delivery:</p>
+                  <Checkbox
+                    value={isFreeDelivery}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setDeliveryFee(0)
+                      }
+                      setIsFreeDelivery(e.target.checked)
+                    }}
+                  ></Checkbox>
+                </div>
               </Flex>
               <div className="menu-order-total-box">
                 <p>Total:</p>
@@ -852,12 +765,12 @@ const Menu = () => {
                   id="totalDiscount"
                   value={receivedUsd}
                   onChange={(e) => setReceivedUsd(e.target.value)}
-                  suffix={"$"}
+                  suffix={'$'}
                   style={{
                     fontSize: 15,
-                    fontWeight: "bold",
-                    maxWidth: "50%",
-                    textAlign: "center",
+                    fontWeight: 'bold',
+                    maxWidth: '50%',
+                    textAlign: 'center'
                   }}
                 />
                 <Input
@@ -867,24 +780,26 @@ const Menu = () => {
                   id="totalDiscount"
                   value={receivedKhr}
                   onChange={(e) => setReceivedKhr(e.target.value)}
-                  suffix={"R"}
+                  suffix={'R'}
                   style={{
                     fontSize: 15,
-                    fontWeight: "bold",
-                    maxWidth: "50%",
-                    textAlign: "center",
+                    fontWeight: 'bold',
+                    maxWidth: '50%',
+                    textAlign: 'center'
                   }}
                 />
               </Flex>
               <Flex className="menu-payment-btn-box">
-                <Button
-                  className="menu-payment-btn"
-                  type="primary"
-                  block
-                  danger
+                <Popconfirm
+                  onConfirm={handleClear}
+                  title="Delete the task"
+                  description="Are you sure to delete this item?"
+                  icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
                 >
-                  Cancel
-                </Button>
+                  <Button className="menu-payment-btn" type="primary" block danger>
+                    Clear Input
+                  </Button>
+                </Popconfirm>
                 <Button
                   className="menu-payment-btn"
                   type="primary"
@@ -900,18 +815,18 @@ const Menu = () => {
       </div>
       <Modal
         className="menu-modal-payment-box"
-        width={"93mm"}
+        width={'93mm'}
         centered
         open={open}
         onCancel={() => {
-          setOpen(false);
+          setOpen(false)
         }}
         footer={[
           <ReactToPrint
             //bodyClass="print-receipt"
             pageStyle={pageStyle}
             content={() => ref.current}
-            onAfterPrint={handleRegisterTable}
+            onBeforePrint={handleRegisterTable}
             trigger={() => (
               <Button type="primary" icon={<PrinterOutlined />}>
                 Print
@@ -920,56 +835,57 @@ const Menu = () => {
           />,
           <Button
             onClick={() => {
-              setOpen(false);
+              setOpen(false)
             }}
           >
             Close
-          </Button>,
+          </Button>
         ]}
       >
         <div className="print-container" ref={ref}>
           <div className="menu-receipt-header">
             <div className="shop-name">
-              <img
-                width={"30px"}
-                height={"30px"}
-                src="/images/products/logo.jpg"
-              ></img>
-              <h1>Now & Wow</h1>
-            </div>
-            <div className="shop-detail">
-              <div className="instagram">
-                <InstagramOutlined style={{ color: "black" }} />
-                <h3>nowwow_cambodia</h3>
-              </div>
-              <div className="facebook">
-                <FacebookOutlined style={{ color: "black" }} />
-                <h3>Now & Wow</h3>
-              </div>
+              {/* <img
+                width={'30px'}
+                height={'30px'}
+                src={__dirname + `/src/renderer/public/images/products/logo.jpg`}
+              ></img> */}
+              <h1 style={{ fontFamily: 'Gloria Hallelujah' }}>Now & Wow</h1>
               <div className="phone">
-                <PhoneOutlined style={{ color: "black" }} />
+                <PhoneOutlined style={{ color: 'black' }} />
                 <div className="phone-num">
                   <h3>078 7000 80</h3>
                   <h3>016 8287 09</h3>
                 </div>
               </div>
             </div>
-          </div>
-          <Divider style={{ borderColor: "black", margin: "0" }}></Divider>
-          <Divider style={{ borderColor: "black", margin: "0" }}></Divider>
-          <div className="customer-info">
-            <h3 style={{ fontSize: "12px" }}>Customer Information: </h3>
-            <div className="customer-detail">
-              <h3>Name: {customerName}</h3>
-              <h3>Phone: {customerPhone}</h3>
-              <h3>Location: {customerLoc}</h3>
-              <h3>
-                Date: {currDate} {currTime}
-              </h3>
+            <div className="shop-detail">
+              <div className="instagram">
+                <InstagramOutlined style={{ color: 'black' }} />
+                <h3>nowwow_cambodia</h3>
+              </div>
+              <div className="facebook">
+                <FacebookOutlined style={{ color: 'black' }} />
+                <h3>Now & Wow</h3>
+              </div>
             </div>
           </div>
-          <Divider style={{ borderColor: "black", margin: "0" }}></Divider>
-          <Divider style={{ borderColor: "black", margin: "0" }}></Divider>
+          <Divider style={{ borderColor: 'black', margin: '0' }}></Divider>
+          <Divider style={{ borderColor: 'black', margin: '0' }}></Divider>
+          <div className="customer-info">
+            <p style={{ fontSize: '12px' }}>Receipt Id: {receiptId}</p>
+            <p style={{ fontSize: '12px' }}>Customer Information: </p>
+            <div className="customer-detail">
+              <p style={{ fontSize: '10px' }}>Name: {customerName}</p>
+              <p style={{ fontSize: '10px' }}>Phone: {customerPhone}</p>
+              <p style={{ fontSize: '10px' }}>Location: {customerLoc}</p>
+              <p style={{ fontSize: '10px' }}>
+                Date: {currDate} {currTime}
+              </p>
+            </div>
+          </div>
+          <Divider style={{ borderColor: 'black', margin: '0' }}></Divider>
+          <Divider style={{ borderColor: 'black', margin: '0' }}></Divider>
           <div className="receipt-order">
             <Table
               className="table-order"
@@ -1001,10 +917,11 @@ const Menu = () => {
               <div className="menu-modal-total">
                 <p>Delivery:</p>
                 <div className="menu-modal-total-currency">
-                  <p>
-                    {" "}
-                    {CommaFormatted(CurrencyFormatted(Number(deliveryFee)))} $
-                  </p>
+                  {isFreeDelivery ? (
+                    <p>Free</p>
+                  ) : (
+                    <p> {CommaFormatted(CurrencyFormatted(Number(deliveryFee)))} $</p>
+                  )}
                   {/* <p> -{CommaFormatted(CurrencyFormatted(discountKhr))} R</p> */}
                 </div>
               </div>
@@ -1018,7 +935,7 @@ const Menu = () => {
                 </div>
               </div>
             </div>
-            <div className="menu-modal-total-box">
+            <div className="menu-modal-total-box" id="no-print">
               <div className="menu-modal-total">
                 <p>Recieved:</p>
                 <div className="menu-modal-total-currency">
@@ -1027,7 +944,7 @@ const Menu = () => {
                 </div>
               </div>
             </div>
-            <div className="menu-modal-total-box">
+            <div className="menu-modal-total-box" id="no-print">
               <div className="menu-modal-total">
                 <p>Change:</p>
                 <div className="menu-modal-total-currency">
@@ -1040,33 +957,33 @@ const Menu = () => {
         </div>
       </Modal>
       <Input
-        style={{ display: "none" }}
+        style={{ display: 'none' }}
         value={barcodeValue}
         onChange={(e) => setBarcodeValue(e.target.value)}
       ></Input>
     </>
-  );
+  )
 
   function mergeObjectsInUnique(array, property) {
-    const newArray = new Map();
+    const newArray = new Map()
 
     array.forEach((item) => {
-      const propertyValue = item[property];
+      const propertyValue = item[property]
       if (newArray.has(propertyValue)) {
         newArray.get(propertyValue).product_qty =
-          item.product_qty + newArray.get(propertyValue).product_qty;
+          item.product_qty + newArray.get(propertyValue).product_qty
         newArray.set(propertyValue, {
           ...item,
-          ...newArray.get(propertyValue),
-        });
-        setIsChange(true);
+          ...newArray.get(propertyValue)
+        })
+        setIsChange(true)
       } else {
-        newArray.set(propertyValue, item);
+        newArray.set(propertyValue, item)
       }
-    });
+    })
 
-    return Array.from(newArray.values());
+    return Array.from(newArray.values())
   }
-};
+}
 
-export default Menu;
+export default Menu

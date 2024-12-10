@@ -1,9 +1,24 @@
 .import-main-container {
   display: flex;
   padding: 2%;
-  padding-left: 5%;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+}
+
+.import-table {
+  background-color: #2a2421;
+  display: flex;
+  width: 80%;
+  height: 100%;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 20px;
+}
+
+.import-main-container svg {
+  color: black;
 }
 
 .import-main-header {
@@ -17,74 +32,70 @@
   align-self: center;
 }
 
-.import-tabs-container {
-  width: 100%;
+.import-input-container {
+  background-color: #2a2421;
+  display: flex;
+  width: 80%;
+  height: 100%;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
   margin-top: 20px;
 }
 
-.import-tabs {
-  background-color: white;
-  border-radius: 10px;
-  padding: 15px;
+.import-input-group .ant-input-disabled {
+  background-color: rgb(199, 199, 199) !important;
+  border-color: rgb(199, 199, 199) !important;
+  color: rgb(61, 58, 58);
 }
 
-.total-price-input {
-  color: black;
-  background-color: white;
-  border-color: white;
+.import-input-block .ant-input-number-disabled {
+  background-color: rgb(199, 199, 199) !important;
+  border-color: rgb(199, 199, 199) !important;
+  color: rgb(61, 58, 58);
 }
 
-#rc-tabs-0-panel-New\ Import
-  > div
-  > div
-  > div
-  > div
-  > div
-  > div
-  > table
-  > tbody
-  > tr
-  > td:nth-child(5)
-  > div
-  > div.ant-input-number-input-wrap
-  > input {
-  font-family: bahnschrift, sans-serif !important;
-}
-
-.btn-add-product {
-  margin-bottom: 10px;
-  width: 20%;
-}
-
-.new-import-tab {
+.import-input-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  width: 90%;
+  height: 100%;
+  gap: 20px;
 }
 
-.import-button-wrapper {
-  padding-top: 10px;
+.import-row-1 {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+.import-input-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  width: 100%;
+}
+
+.import-input-block label {
+  font-size: 16px;
+  font-family: 'bahnschrift';
+  color: white;
+}
+
+.import-input-button {
   display: flex;
   gap: 10px;
-}
-
-.import-history-tab {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.import-range-picker {
-  margin-bottom: 10px;
-  width: 70%;
-}
-
-.import-inquiry-wrapper {
-  display: flex;
-  gap: 10px;
+  width: 100%;
   justify-content: flex-end;
 }
 
-.import-main-container svg {
-  color: black;
+.import-table .ant-pagination {
+  padding: 5px !important;
+  margin: 0px !important;
+  background-color: white;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
 }

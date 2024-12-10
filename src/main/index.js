@@ -1,16 +1,31 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import { exec } from 'child_process'
+import path from 'path'
+const dirname = path.resolve(path.dirname(''))
+// import icon from '../../resources/icon.png?asset'
+const runExpress = exec('npm run server', (error, stdout, stderr) => {
+  if (error) {
+    log.info(error.stack)
+    log.info('Error code: ' + error.code)
+    log.info('Signal received: ' + error.signal)
+    return
+  } else {
+    log.info('Child Process STDOUT: ' + stdout)
+    log.info('Child Process STDERR: ' + stderr)
+  }
+})
 
 function createWindow() {
   // Create the browser window.
+
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
     autoHideMenuBar: false,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    icon: join(dirname, 'src/renderer/public/images/products/logo.jpg'),
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
@@ -23,6 +38,7 @@ function createWindow() {
   mainWindow.maximize()
 
   mainWindow.on('ready-to-show', () => {
+    runExpress
     mainWindow.show()
   })
 
@@ -38,6 +54,11 @@ function createWindow() {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  mainWindow.on('closed', () => {
+    runExpress.kill()
+    process.exit()
+  })
 }
 
 // This method will be called when Electron has finished
@@ -72,7 +93,16 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
+    console.log('Closing program.')
+    runExpress.kill()
+    process.exit()
   }
+})
+
+app.on('quit', () => {
+  runExpress.kill()
+  app.quit()
+  process.exit()
 })
 
 // In this file you can include the rest of your app"s specific main process

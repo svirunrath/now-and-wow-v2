@@ -41,7 +41,7 @@ const ProductCard = ({ category_id, product, isNew, sub_category_id, onSubmitCha
 
     var sell_price = [min_price, max_price]
 
-    product_title = product.sub_category_name + ' - ' + product.product_name
+    product_title = product.product_name
     product_description =
       '$ ' +
       (max_price == min_price

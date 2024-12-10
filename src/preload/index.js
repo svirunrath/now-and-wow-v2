@@ -12,16 +12,16 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
-    window.addEventListener('DOMContentLoaded', () => {
-      exec(`npm run server`)
-    })
+    // window.addEventListener('DOMContentLoaded', () => {
+    //   exec(`npm run server`)
+    // })
   } catch (error) {
     console.error(error)
   }
 } else {
   window.electron = electronAPI
   window.api = api
-  window.addEventListener('DOMContentLoaded', () => {
-    exec(`npm run server`)
-  })
+  // window.addEventListener('DOMContentLoaded', () => {
+  //   exec(`npm run server`)
+  // })
 }

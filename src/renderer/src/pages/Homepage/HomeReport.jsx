@@ -1,26 +1,24 @@
-import React from "react";
-import { Button, Flex, Segmented } from "antd";
-import { FaCheck } from "react-icons/fa";
+import React from 'react'
+import { Button, Flex, Segmented } from 'antd'
+import { FaCheck } from 'react-icons/fa'
+import path from 'path'
+const __dirname = path.resolve(path.dirname(''))
 
 const HomeReport = ({ setHomepageOrder, setPaidOrder, setLoading }) => {
-  console.log(setHomepageOrder);
+  console.log(setHomepageOrder)
   return (
     <Flex justify="space-between">
       <Flex gap={15}>
         <Flex
           className="homepage-report-icon"
           vertical={true}
-          style={{ height: "100%" }}
+          style={{ height: '100%' }}
           align="center"
           justify="center"
         >
-          <img src={setHomepageOrder.icon} width={20} height={20}></img>
+          <img src={__dirname + setHomepageOrder.icon} width={20} height={20}></img>
         </Flex>
-        <Flex
-          justify="space-between"
-          vertical={true}
-          style={{ height: "100%" }}
-        >
+        <Flex justify="space-between" vertical={true} style={{ height: '100%' }}>
           <p>{setHomepageOrder.name}</p>
           <p className="homepage-report-order">
             Sold:
@@ -31,9 +29,9 @@ const HomeReport = ({ setHomepageOrder, setPaidOrder, setLoading }) => {
         </Flex>
       </Flex>
     </Flex>
-  );
-};
-export default HomeReport;
+  )
+}
+export default HomeReport
 
 {
   /* <Flex gap={15}>

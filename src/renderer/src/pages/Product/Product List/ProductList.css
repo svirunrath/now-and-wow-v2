@@ -13,15 +13,21 @@
 .product-list-main-header {
   display: flex;
   color: white;
-  font-size: 24px;
+  font-size: 15px;
   width: 100%;
   justify-content: space-between;
 }
 
 .main-category {
+  margin-top: 5px;
+  margin-bottom: 5px;
   display: flex;
-  gap: 20px;
+  gap: 15px;
+  color: white;
+  font-size: 15px;
   align-items: center;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .main-category-select {
@@ -38,9 +44,8 @@
 
 .new-product-card {
   display: flex;
-  height: 300px;
+  height: 100%;
   width: 250px;
-
   outline: 1px;
   outline-style: dashed;
   outline-color: black;
@@ -85,6 +90,11 @@
   text-align: end;
   padding-right: 20px;
   margin-top: 20px;
+}
+
+.product-card-list-page {
+  display: flex;
+  flex-direction: column;
 }
 
 .product-pagination button span svg {

@@ -1,0 +1,77 @@
+.stock-cut-main-container {
+  display: flex;
+  padding: 2%;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.stock-cut-main-container svg {
+  color: black;
+}
+
+.stock-cut-main-container .ant-input-disabled {
+  background-color: rgb(199, 199, 199) !important;
+  border-color: rgb(199, 199, 199) !important;
+  color: rgb(61, 58, 58);
+}
+
+.stock-cut-main-container .ant-input-number-disabled {
+  background-color: rgb(199, 199, 199) !important;
+  border-color: rgb(199, 199, 199) !important;
+  color: rgb(61, 58, 58);
+}
+
+.stock-cut-input-button {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.stock-cut-header {
+  display: -webkit-box;
+  color: white;
+  font-size: 40px;
+}
+
+.stock-cut-input-container {
+  background-color: #2a2421;
+  display: flex;
+  width: 80%;
+  height: 100%;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 20px;
+}
+
+.stock-cut-input-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  height: 100%;
+  gap: 20px;
+}
+
+.stock-cut-row-1 {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+.stock-cut-input-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  width: 100%;
+}
+
+.stock-cut-input-block label {
+  font-size: 16px;
+  font-family: 'bahnschrift';
+  color: white;
+}

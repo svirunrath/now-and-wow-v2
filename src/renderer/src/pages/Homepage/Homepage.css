@@ -8,6 +8,10 @@
   padding: 20px;
 }
 
+.homepage-container p {
+  color: white;
+}
+
 .homepage-wrapper {
   display: flex;
   width: 100%;
@@ -119,4 +123,4 @@
   width: 40px;
   height: 40px;
   border-radius: 25%;
-}/*# sourceMappingURL=Homepage.css.map */
+} /*# sourceMappingURL=Homepage.css.map */

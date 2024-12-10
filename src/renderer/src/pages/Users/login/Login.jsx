@@ -1,67 +1,67 @@
-import React, { useState, useEffect } from "react";
-import "./Login.css";
-import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import { useLoginMutation } from "../../../slices/userAPISlices.js";
-import { setCredentials } from "../../../slices/userSlices.js";
-import { useNavigate } from "react-router-dom";
-import { Icon } from "react-icons-kit";
-import { eyeOff } from "react-icons-kit/feather/eyeOff";
-import { eye } from "react-icons-kit/feather/eye";
+import React, { useState, useEffect } from 'react'
+import './Login.css'
+import { toast } from 'react-toastify'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLoginMutation } from '../../../slices/userAPISlices.js'
+import { setCredentials } from '../../../slices/userSlices.js'
+import { useNavigate } from 'react-router-dom'
+import { Icon } from 'react-icons-kit'
+import { eyeOff } from 'react-icons-kit/feather/eyeOff'
+import { eye } from 'react-icons-kit/feather/eye'
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [type, setType] = useState("password");
-  const [icon, setIcon] = useState(eyeOff);
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [type, setType] = useState('password')
+  const [icon, setIcon] = useState(eyeOff)
 
-  const [login] = useLoginMutation();
-  const [isChecked, setIsChecked] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [login] = useLoginMutation()
+  const [isChecked, setIsChecked] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const { userInfo } = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.auth)
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (userInfo) {
-      navigate("/");
+      navigate('/home')
     }
-  }, [navigate, userInfo]);
+  }, [navigate, userInfo])
 
   const submitHandler = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const res = await login({ username, password }).unwrap();
+      const res = await login({ username, password }).unwrap()
       if (isChecked) {
-        dispatch(setCredentials({ ...res }));
+        dispatch(setCredentials({ ...res }))
       }
-      setIsLoggedIn(true);
-      sessionStorage.setItem("isLoggedIn", isLoggedIn);
-      sessionStorage.setItem("userInfo", JSON.stringify(res.user));
+      setIsLoggedIn(true)
+      sessionStorage.setItem('isLoggedIn', isLoggedIn)
+      sessionStorage.setItem('userInfo', JSON.stringify(res.user))
 
-      navigate("/home");
+      navigate('/home')
     } catch (err) {
-      toast.error(err?.data?.message || err.error);
+      toast.error(err?.data?.message || err.error)
     }
-  };
+  }
 
   const handleToggle = async (e) => {
-    if (type === "password") {
-      setIcon(eye);
-      setType("text");
+    if (type === 'password') {
+      setIcon(eye)
+      setType('text')
     } else {
-      setIcon(eyeOff);
-      setType("password");
+      setIcon(eyeOff)
+      setType('password')
     }
-  };
+  }
 
   const onChangeCheckbox = (e) => {
     setIsChecked({
-      isChecked: e.target.checked,
-    });
-  };
+      isChecked: e.target.checked
+    })
+  }
 
   return (
     <>
@@ -115,7 +115,7 @@ const Login = () => {
         </form>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

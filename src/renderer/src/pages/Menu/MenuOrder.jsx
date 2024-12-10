@@ -1,114 +1,67 @@
-import { Button, Flex, Popconfirm, Input, Select } from "antd";
-import React, { useState, useEffect } from "react";
-import { MdDelete } from "react-icons/md";
-import { QuestionCircleOutlined } from "@ant-design/icons";
-import { useGetProductPriceByPriceIdQuery } from "../../slices/productPriceSlices";
-const { Option } = Select;
-import { FaMinus } from "react-icons/fa6";
+import { Button, Flex, Popconfirm, Input, Select, InputNumber } from 'antd'
+import React, { useState, useEffect } from 'react'
+import { MdDelete } from 'react-icons/md'
+import { QuestionCircleOutlined } from '@ant-design/icons'
+import { useGetProductPriceByPriceIdQuery } from '../../slices/productPriceSlices'
+const { Option } = Select
+import { FaMinus } from 'react-icons/fa6'
+import { toast } from 'react-toastify'
 
 const MenuOrder = ({
   orderData,
   setOrderDiscount,
   handleDecrement,
   setDeleteOrder,
-  setIsChange,
+  setIsChange
 }) => {
-  const [priceId, setPriceId] = useState(
-    orderData.price_id > 0 ? orderData.price_id : null
-  );
-
+  const [productQty, setProductQty] = useState(orderData.product_qty)
   const [sellPrice, setSellPrice] = useState(
     orderData.product_sell_price > 0 ? orderData.product_sell_price : 0
-  );
-  const { data: priceData, isLoading: priceIsLoading } =
-    useGetProductPriceByPriceIdQuery({ product_id: orderData.product_id });
-  const [discountType, setDiscountType] = useState("percentage");
+  )
 
-  let priceDataSource = [];
-
-  if (!priceIsLoading && priceData) {
-    for (let i = 0; i < priceData.product_price.length; i++) {
-      let price = Number(priceData.product_price[i].product_sell_price);
-
-      priceDataSource.push(
-        <Option
-          key={priceData.product_price[i].price_id}
-          value={priceData.product_price[i].price_id}
-          label={price}
-        >
-          {"$ " + price.toFixed(2)}
-        </Option>
-      );
-    }
-  }
-
-  const subTotalOrderprice = orderData.product_qty * sellPrice;
-  const [discount, setDiscount] = useState(orderData.discount);
+  const [discountType, setDiscountType] = useState('percentage')
+  const subTotalOrderprice = productQty * Number(sellPrice).toFixed(2)
+  const [discount, setDiscount] = useState(orderData.discount)
   let discountAmt =
-    discountType === "percentage"
-      ? (subTotalOrderprice * discount) / 100
-      : discount * orderData.product_qty;
-  let product_total = subTotalOrderprice - discountAmt;
-
-  // const handleDecrement = () => {
-  //   orderData.product_qty = orderData.product_qty - 1;
-  //   orderData.isDecreased = true;
-  //   return setIsChange(true);
-  // };
+    discountType === 'percentage' ? (subTotalOrderprice * discount) / 100 : discount * productQty
+  let product_total = Number(subTotalOrderprice).toFixed(2) - Number(discountAmt).toFixed(2)
 
   useEffect(() => {
-    orderData.discount = discountAmt;
-  }, [discountAmt]);
+    orderData.discount = Number(discountAmt).toFixed(2)
+  }, [discountAmt])
 
   useEffect(() => {
-    orderData.total_price = product_total;
-  }, [product_total]);
+    setProductQty(orderData.product_qty)
+  }, [orderData.product_qty])
 
   useEffect(() => {
-    if (priceId > 0) {
-      return setIsChange(true);
-    }
-  }, [priceId]);
+    orderData.total_price = product_total
+    return setIsChange(true)
+  }, [product_total])
 
   return (
     <>
-      <div className="menu-order-item" key={orderData.product_id}>
+      <div className="menu-order-item" key={orderData.import_detail_id}>
         <div className="menu-order-name-box">
           <p className="menu-order-name">{orderData.product_name}</p>
-          {!priceId && !priceIsLoading ? (
-            <Select
-              className="menu-price-data"
-              style={{ width: "100px" }}
-              value={priceId}
-              onChange={(value, options) => {
-                setPriceId(value);
-                setSellPrice(options.label);
-                orderData.price_id = value;
-                orderData.product_sell_price = options.label;
-              }}
-            >
-              {priceDataSource}
-            </Select>
-          ) : (
-            <p>{"$ " + sellPrice.toFixed(2)}</p>
-          )}
+          <p>{'$ ' + sellPrice.toFixed(2)}</p>
         </div>
         <Input
           placeholder="0"
-          id={"input-" + orderData.product_id}
+          id={'input-' + orderData.product_id}
           value={discount}
           onChange={(e) => {
-            setDiscount(e.target.value);
-            return setIsChange(true);
+            setDiscount(e.target.value)
+            return setIsChange(true)
           }}
           style={{
             fontSize: 15,
-            fontWeight: "bold",
-            width: "20%",
-            textAlign: "center",
-            borderTopRightRadius: "0",
-            borderBottomRightRadius: "0",
-            height: "32px",
+            fontWeight: 'bold',
+            width: '20%',
+            textAlign: 'center',
+            borderTopRightRadius: '0',
+            borderBottomRightRadius: '0',
+            height: '32px'
           }}
         />
         <Select
@@ -116,8 +69,8 @@ const MenuOrder = ({
           value={discountType}
           suffixIcon={null}
           onChange={(value) => {
-            setDiscountType(value);
-            return setIsChange(true);
+            setDiscountType(value)
+            return setIsChange(true)
           }}
         >
           <Option key="percentage" value="percentage">
@@ -127,37 +80,34 @@ const MenuOrder = ({
             $
           </Option>
         </Select>
-        <p className="menu-order-qty" id={orderData.product_id}>
-          x{orderData.product_qty}
-        </p>
+        <InputNumber
+          className="menu-order-qty"
+          value={productQty}
+          onChange={(e) => {
+            if (e > Number(orderData.stock_qty)) {
+              toast.error('Product ' + orderData.product_name + ' is out of stock.')
+            } else if (e == 0) {
+              toast.error('Product quantity cannot be zero.')
+            } else {
+              setProductQty(e)
+              orderData.product_qty = e
+            }
+          }}
+        ></InputNumber>
         <p className="menu-order-totalprice">$ {product_total.toFixed(2)}</p>
 
-        <div
-          className="menu-order-delete"
-          style={{ display: "flex", gap: "10px" }}
-        >
-          <Button
-            className="menu-order-delete"
-            onClick={handleDecrement}
-            block
-            icon={<FaMinus style={{ color: "white" }} />}
-          ></Button>
+        <div className="menu-order-delete" style={{ display: 'flex', gap: '10px' }}>
           <Popconfirm
             onConfirm={setDeleteOrder}
             title="Delete the task"
             description="Are you sure to delete this item?"
-            icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+            icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
           >
-            <Button
-              className="menu-order-delete"
-              danger
-              block
-              icon={<MdDelete />}
-            ></Button>
+            <Button className="menu-order-delete" danger block icon={<MdDelete />}></Button>
           </Popconfirm>
         </div>
       </div>
     </>
-  );
-};
-export default MenuOrder;
+  )
+}
+export default MenuOrder

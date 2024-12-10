@@ -2,80 +2,63 @@ import { Button, Modal, Select } from 'antd'
 import Barcode from 'react-barcode'
 import './styles/BarcodeModal.css'
 import { useEffect, useRef, useState } from 'react'
-import {
-  useGetPriceIdByProductPriceQuery,
-  useGetProductPriceByPriceIdQuery
-} from '../slices/productPriceSlices.js'
+
 import { PrinterOutlined } from '@ant-design/icons'
 import ReactToPrint from 'react-to-print'
 import { useRegisterBarcodeMutation } from '../slices/barcodeSlices.js'
+import { useRetrieveImportDetailByIdQuery } from '../slices/importAPISlices.js'
 
 const { Option } = Select
 
-const BarcodeModal = ({ isOpen, product, handleOpenModal, product_sell_price }) => {
+const BarcodeModal = ({ isOpen, product, handleOpenModal, importDetailId }) => {
   const ref = useRef()
-  let priceDataSource = []
   const [priceId, setPriceId] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(isOpen)
   const [priceValue, setPriceValue] = useState('$ ' + '0.00')
   const userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
   const [registerBarcode] = useRegisterBarcodeMutation()
+  const [importDataSource, setImportDataSource] = useState([])
+  const {
+    data: importDetailData,
+    isLoading: importLoading,
+    refetch: import_refetch
+  } = useRetrieveImportDetailByIdQuery({ product_id: product.product_id })
 
   const [barcodeValue, setBarcodeValue] = useState(
     product.product_id.toString().padStart(6, '0') + '0'.padStart(6, '0')
   )
 
-  const { data: priceData, isLoading: priceIsLoading } = useGetProductPriceByPriceIdQuery({
-    product_id: product.product_id
-  })
-
-  const { data, isLoading } = useGetPriceIdByProductPriceQuery(
-    {
-      product_id: product.product_id,
-      product_sell_price: product_sell_price
-    },
-    { skip: product_sell_price === undefined }
-  )
+  useEffect(() => {
+    if (!importLoading) {
+      setImportDataSource(importDetailData.import_detail)
+    }
+  }, [importDetailData])
 
   useEffect(() => {
-    if (!isLoading && product_sell_price) {
-      let price = Number(product_sell_price)
-      setPriceId(data.product_price[0].price_id)
-      setPriceValue('$ ' + price.toFixed(2))
-      setBarcodeValue(
-        product.product_id.toString().padStart(6, '0') +
-          data.product_price[0].price_id.toString().padStart(6, '0')
-      )
+    if (!importLoading && importDataSource.length > 0 && importDetailId) {
+      handlePriceChange(importDetailId.toString())
     }
-  }, [data])
+  }, [importDataSource])
 
-  if (!priceIsLoading) {
-    for (let i = 0; i < priceData.product_price.length; i++) {
-      const price = Number(priceData.product_price[i].product_sell_price)
-      priceDataSource.push(
-        <Option
-          key={priceData.product_price[i].price_id}
-          value={priceData.product_price[i].price_id}
-          label={'$ ' + price.toFixed(2)}
-        >
-          {'$ ' + price.toFixed(2)}
-        </Option>
-      )
-    }
-  }
-
-  const handlePriceChange = (value, options) => {
+  const handlePriceChange = (value) => {
     setPriceId(value)
-    setPriceValue(options.label)
+    let detail = [...importDataSource]
+    detail = detail.filter((inner) => inner.import_detail_id === value)
+    importDetailId = value
+
+    setPriceValue('$ ' + Number(detail[0].product_sell_price).toFixed(2))
     setBarcodeValue(
       product.product_id.toString().padStart(6, '0') + value.toString().padStart(6, '0')
     )
   }
 
   const handleRegisterBarcode = async () => {
+    let detail = [...importDataSource]
+    detail = detail.filter((inner) => inner.import_detail_id === priceId)
+
     const req = {
       product_id: product.product_id,
-      price_id: priceId,
+      import_detail_id: priceId,
       created_by: userInfo.username,
       barcode_value: barcodeValue
     }
@@ -95,13 +78,13 @@ const BarcodeModal = ({ isOpen, product, handleOpenModal, product_sell_price }) 
     <>
       <Modal
         open={isModalOpen}
+        className="modal-body"
         onCancel={() => {
           setIsModalOpen(false)
           return handleOpenModal(false)
         }}
         footer={[
           <ReactToPrint
-            bodyClass="print-agreement"
             content={() => ref.current}
             onAfterPrint={handleRegisterBarcode}
             trigger={() => (
@@ -120,28 +103,47 @@ const BarcodeModal = ({ isOpen, product, handleOpenModal, product_sell_price }) 
           </Button>
         ]}
       >
-        <p1>Price Select: </p1>
-        <Select style={{ width: '130px' }} onChange={handlePriceChange} value={priceId}>
-          {priceDataSource}
-        </Select>
-        <div className="barcode-container" ref={ref}>
-          <div className="product-barcode">
-            <Barcode
-              width={2}
-              height={60}
-              displayValue={true}
-              format="CODE128"
-              value={barcodeValue}
-            ></Barcode>
+        <div className="modal-main-container">
+          <div className="price-select-container">
+            <p1 id="no-print">Price Select: </p1>
+            <Select
+              id="no-print"
+              onChange={handlePriceChange}
+              value={priceId}
+              style={{ width: '100%' }}
+            >
+              {importDataSource.map((importDetail) => {
+                return (
+                  <Option value={importDetail.import_detail_id}>
+                    {new Date(importDetail.import_date).toLocaleDateString('GB')} - Import Price: ${' '}
+                    {Number(importDetail.product_unit_total_price).toFixed(2)} - Sell Price: ${' '}
+                    {Number(importDetail.product_sell_price).toFixed(2)} - Qty:{' '}
+                    {Number(importDetail.product_qty)}
+                  </Option>
+                )
+              })}
+            </Select>
           </div>
-          <div className="barcode-content">
-            <div className="product-name">
-              <p1 style={{ color: 'black' }}>Product Name:</p1>
-              <p1> {product.product_name}</p1>
-            </div>
-            <div className="product-price-select">
-              Product Price:
-              <p1 style={{ color: 'black' }}>{priceValue}</p1>
+          <div ref={ref} className="barcode-print-container">
+            <div className="barcode-container">
+              <Barcode
+                width={1.2}
+                height={30}
+                margin={0}
+                textAlign="center"
+                fontSize={12}
+                displayValue={true}
+                format="CODE128"
+                value={barcodeValue}
+              ></Barcode>
+              <div className="product-name">
+                <p1 style={{ color: 'black' }}>Name:</p1>
+                <p1> {product.product_name}</p1>
+              </div>
+              <div className="product-price-select">
+                <p1 style={{ color: 'black' }}>Price:</p1>
+                <p1 style={{ color: 'black' }}>{priceValue}</p1>
+              </div>
             </div>
           </div>
         </div>
