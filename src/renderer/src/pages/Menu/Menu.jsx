@@ -416,63 +416,87 @@ const Menu = () => {
     }
   }, [order])
 
+  const validateAndRegisterSale = async () => {
+    if (order.length === 0) {
+      toast.error('There is no order to print.')
+      return null
+    } else {
+      return true
+    }
+  }
+
   const handleRegisterTable = async () => {
     try {
-      let outputData = {}
-      if (order.length === 0) {
-        toast.error('There is no order to print.')
-        return
-      } else {
-        const req = {
-          sale_price: Number(subTotalUsd).toFixed(2),
-          sale_discount: Number(discountUsd).toFixed(2),
-          sale_total_price: Number(totalUsd).toFixed(2),
-          received_payment: Number(totalReceivedAmt).toFixed(2),
-          payment_remaining: Number(changeUsd).toFixed(2),
-          exch_rate: exchangeRate,
-          customer_name: customerName,
-          customer_location: customerLoc,
-          customer_phone: customerPhone,
-          delivery_fee: Number(deliveryFee).toFixed(2),
-          created_by: userInfo.username,
-          sale_time: currTime,
-          is_delivery_free: isFreeDelivery,
-          orders: order
-        }
+      const outputData = await validateAndRegisterSale()
 
-        outputData = await registerSale(req).unwrap()
+      if (!outputData) return
+
+      const req = {
+        sale_price: Number(subTotalUsd).toFixed(2),
+        sale_discount: Number(discountUsd).toFixed(2),
+        sale_total_price: Number(totalUsd).toFixed(2),
+        received_payment: Number(totalReceivedAmt).toFixed(2),
+        payment_remaining: Number(changeUsd).toFixed(2),
+        exch_rate: exchangeRate,
+        customer_name: customerName,
+        customer_location: customerLoc,
+        customer_phone: customerPhone,
+        delivery_fee: Number(deliveryFee).toFixed(2),
+        created_by: userInfo.username,
+        sale_time: currTime,
+        is_delivery_free: isFreeDelivery,
+        orders: order
       }
 
-      if (outputData.body.success) {
-        toast.success('Registered Sale Successfully.')
-        setBarcodeValue('')
-        setCustomerLoc('')
-        setCustomerName('')
-        setCustomerPhone('')
-        setDiscount(0)
-        setDeliveryFee(0)
-        setDiscountType('percentage')
-        setEnterBarcodeValue('')
-        setIsChange(false)
-        setIsScan(false)
-        setOpen(false)
-        setShowProduct(false)
-        setMainId('ALL')
-        setOrder([])
-        setProductData([])
-        setSubId(null)
-        setReceiptOrder([])
-        setReceivedUsd(0)
-        setReceivedKhr(0)
-        setIsFreeDelivery(false)
-        saleIdRefetch()
-        product_refetch()
-      } else {
-        toast.error('Registered sale failed.')
+      try {
+        const outputData = await registerSale(req).unwrap()
+        if (outputData.body.success) {
+          toast.success('Registered Sale Successfully.')
+
+          setBarcodeValue('')
+          setCustomerLoc('')
+          setCustomerName('')
+          setCustomerPhone('')
+          setDiscount(0)
+          setDeliveryFee(0)
+          setDiscountType('percentage')
+          setEnterBarcodeValue('')
+          setIsChange(false)
+          setIsScan(false)
+          setOpen(false)
+          setShowProduct(false)
+          setMainId('ALL')
+          setOrder([])
+          setProductData([])
+          setSubId(null)
+          setReceiptOrder([])
+          setReceivedUsd(0)
+          setReceivedKhr(0)
+          setIsFreeDelivery(false)
+          saleIdRefetch()
+          product_refetch()
+          return outputData
+        } else {
+          toast.error('Registered sale failed.')
+          return null
+        }
+      } catch (error) {
+        toast.error(error.message)
+        return null
       }
     } catch (error) {
       toast.error(error.message)
       return
+    }
+  }
+
+  const printRef = useRef(null)
+  const reactToPrintTrigger = useRef(null)
+
+  const handlePrint = async () => {
+    const success = await handleRegisterTable()
+    if (success && reactToPrintTrigger.current) {
+      reactToPrintTrigger.current() // triggers ReactToPrint manually
     }
   }
 
@@ -822,17 +846,11 @@ const Menu = () => {
           setOpen(false)
         }}
         footer={[
-          <ReactToPrint
-            //bodyClass="print-receipt"
-            pageStyle={pageStyle}
-            content={() => ref.current}
-            onBeforePrint={handleRegisterTable}
-            trigger={() => (
-              <Button type="primary" icon={<PrinterOutlined />}>
-                Print
-              </Button>
-            )}
-          />,
+          <Popconfirm title="Are you sure you want to print this receipt?" onConfirm={handlePrint}>
+            <Button type="primary" icon={<PrinterOutlined />}>
+              Print
+            </Button>
+          </Popconfirm>,
           <Button
             onClick={() => {
               setOpen(false)
@@ -955,6 +973,14 @@ const Menu = () => {
             </div>
           </div>
         </div>
+        <ReactToPrint
+          pageStyle={pageStyle}
+          content={() => ref.current}
+          trigger={() => <></>} // Don't use the trigger here
+          ref={(el) => {
+            if (el) reactToPrintTrigger.current = el.handlePrint
+          }}
+        />
       </Modal>
       <Input
         style={{ display: 'none' }}

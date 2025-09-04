@@ -16,12 +16,14 @@ const ImportProduct = () => {
   const [productId, setProductId] = useState(null)
   const [productInfo, setProductInfo] = useState(null)
   const [importQty, setImportQty] = useState(0)
+  const [importFullPrice, setImportFullPrice] = useState(0)
   const [importUnitPrice, setImportUnitPrice] = useState(0)
   const [importPrice, setImportPrice] = useState(0)
   const [importTax, setImportTax] = useState(0)
   const [shippingFee, setShippingFee] = useState(0)
   const [productSellPrice, setProductSellPrice] = useState(0)
   const [importTtlPrice, setImportTtlPrice] = useState(0)
+  const [importDis, setImportDis] = useState(0)
   const [importDataSource, setImportDataSource] = useState([])
   const [rowCount, setRowCount] = useState(1)
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
@@ -36,9 +38,11 @@ const ImportProduct = () => {
 
   const setDefault = () => {
     setImportPrice(0)
+    setImportFullPrice(0)
     setImportQty(0)
     setImportTax(0)
     setImportUnitPrice(0)
+    setImportDis(0)
     setShippingFee(0)
     setProductSellPrice(0)
     setProductId(null)
@@ -68,11 +72,14 @@ const ImportProduct = () => {
   useEffect(() => {
     // let importTaxPrice = (importPrice * 10.25) / 100
     // setImportTax(importTaxPrice)
-    let importUnitPrice = Number(shippingFee) + Number(importPrice) + Number(importTax)
+    let importUnitPrice =
+      Number(shippingFee) + Number(importPrice) + Number(importTax) - Number(importDis)
     let totalPrice = Number(importUnitPrice) * Number(importQty)
+    let fullPrice = (Number(shippingFee) + Number(importPrice) + Number(importTax)) * importQty
     setImportUnitPrice(importUnitPrice)
     setImportTtlPrice(totalPrice)
-  }, [shippingFee, importPrice, importQty, importTax])
+    setImportFullPrice(fullPrice)
+  }, [shippingFee, importPrice, importQty, importTax, importDis])
 
   const rowSelection = {
     onChange: (selectedRowKeys) => {
@@ -97,6 +104,7 @@ const ImportProduct = () => {
       productTobBeInsert.shipping_fee = shippingFee
       productTobBeInsert.import_unit_price = importUnitPrice
       productTobBeInsert.import_total_price = importTtlPrice
+      productTobBeInsert.import_discount = importDis
       productTobBeInsert.product_sell_price = productSellPrice
       tempDataSource.push(productTobBeInsert)
 
@@ -228,11 +236,37 @@ const ImportProduct = () => {
             </div>
             <div className="import-row-1">
               <div className="import-input-group">
+                <label>Discount</label>
+                <InputNumber
+                  style={{ width: '60%' }}
+                  value={importDis}
+                  onChange={(value) => setImportDis(value)}
+                ></InputNumber>
+              </div>
+              <div className="import-input-group">
                 <label>Import Unit Price</label>
                 <InputNumber
                   disabled={true}
                   style={{ width: '60%' }}
                   value={importUnitPrice.toFixed(2)}
+                ></InputNumber>
+              </div>
+              <div className="import-input-group">
+                <label>Import Full Price</label>
+                <InputNumber
+                  disabled={true}
+                  style={{ width: '60%' }}
+                  value={importFullPrice.toFixed(2)}
+                ></InputNumber>
+              </div>
+            </div>
+            <div className="import-row-1">
+              <div className="import-input-group">
+                <label>Total Discount</label>
+                <InputNumber
+                  disabled={true}
+                  style={{ width: '60%' }}
+                  value={(Number(importDis) * Number(importQty)).toFixed(2)}
                 ></InputNumber>
               </div>
               <div className="import-input-group">
@@ -254,6 +288,7 @@ const ImportProduct = () => {
             </div>
           </div>
         </div>
+
         <div className="import-table">
           <div className="import-input-block">
             <Table

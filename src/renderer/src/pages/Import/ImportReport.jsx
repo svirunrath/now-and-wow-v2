@@ -78,9 +78,14 @@ const ImportReport = () => {
       const row = await form.validateFields()
       const newData = [...importDataSource]
       const index = newData.findIndex((item) => key === item.key)
+
       let ttlImport =
-        Number(row.product_import_price) + Number(row.shipping_fee) + Number(row.tax_amt)
+        Number(row.product_import_price) +
+        Number(row.shipping_fee) +
+        Number(row.tax_amt) -
+        Number(row.product_discount_price)
       let res = null
+      row.product_unit_total_price = ttlImport
       const req = {
         import_qty: row.import_qty ? row.import_qty : 0,
         import_detail_id: record.import_detail_id,
@@ -95,6 +100,9 @@ const ImportReport = () => {
         product_id: record.product_id,
         shipping_fee: row.shipping_fee ? Number(row.shipping_fee).toFixed(2) : 0.0,
         product_unit_total_price: ttlImport > 0 ? Number(ttlImport).toFixed(2) : 0.0,
+        product_discount_price: row.product_discount_price
+          ? Number(row.product_discount_price).toFixed(2)
+          : 0.0,
         tax_amt: row.tax_amt ? Number(row.tax_amt).toFixed(2) : 0.0
       }
 
@@ -214,6 +222,26 @@ const ImportReport = () => {
       },
       sorter: (a, b) => a.shipping_fee - b.shipping_fee,
       editable: true
+    },
+    {
+      title: 'Discount',
+      dataIndex: 'product_discount_price',
+      width: '150px',
+      render: (value) => {
+        return '$ ' + CommaFormatted(CurrencyFormatted(Number(value)))
+      },
+      sorter: (a, b) => a.product_discount_price - b.product_discount_price,
+      editable: true
+    },
+    {
+      title: 'Unit Total Price',
+      dataIndex: 'product_unit_total_price',
+      width: '150px',
+      render: (value) => {
+        return '$ ' + CommaFormatted(CurrencyFormatted(Number(value)))
+      },
+      sorter: (a, b) => a.product_unit_total_price - b.product_unit_total_price,
+      editable: false
     },
     {
       title: 'Sell Price',
@@ -351,6 +379,10 @@ const ImportReport = () => {
         {
           title: 'Shipping Fee',
           dataIndex: 'shipping_fee'
+        },
+        {
+          title: 'Discount',
+          dataIndex: 'product_discount_price'
         },
         {
           title: 'Total Unit Price',

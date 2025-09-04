@@ -305,6 +305,9 @@ const Report = () => {
             product_name: outputData[i].product_name,
             import_detail_id: outputData[i].import_detail_id,
             product_sell_price: Number(outputData[i].product_sell_price),
+            product_import_price: Number(outputData[i].product_import_price),
+            tax_amt: Number(outputData[i].tax_amt),
+            shipping_fee: Number(outputData[i].shipping_fee),
             stck_cut_qty: Number(outputData[i].stck_cut_qty),
             stock_qty: Number(outputData[i].stock_qty),
             description: outputData[i].description

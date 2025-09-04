@@ -53,6 +53,13 @@ const importColumn = [
     }
   },
   {
+    title: 'Discount',
+    dataIndex: 'import_discount',
+    render: (value) => {
+      return '$ ' + CommaFormatted(CurrencyFormatted(Number(value)))
+    }
+  },
+  {
     title: 'Import Unit Price',
     dataIndex: 'import_unit_price',
     render: (value) => {

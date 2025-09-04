@@ -146,8 +146,11 @@ const ProductStockCut = () => {
                     ? priceData.import_detail.map((price) => (
                         <Option value={price.import_detail_id} key={price.import_detail_id}>
                           {new Date(price.import_date).toLocaleDateString('GB')} - Import Price: ${' '}
-                          {Number(price.product_unit_total_price).toFixed(2)} - Sell Price: ${' '}
-                          {Number(price.product_sell_price).toFixed(2)}
+                          {Number(price.product_unit_total_price).toFixed(2)} - Shipping Fee: ${' '}
+                          {Number(price.tax_amt).toFixed(2)} - Tax Amt: ${' '}
+                          {Number(price.shipping_fee).toFixed(2)} - Sell Price: ${' '}
+                          {Number(price.product_sell_price).toFixed(2)} - Stock Qty:
+                          {Number(price.product_qty)}
                         </Option>
                       ))
                     : null}
@@ -212,9 +215,12 @@ const ProductStockCut = () => {
             </div>
             <div className="stock-cut-row-1">
               <div className="stock-cut-input-button">
-                <Button type="primary" onClick={handleSubmit}>
-                  Submit
-                </Button>
+                <Popconfirm
+                  title="Are you sure you want to proceed the next action?"
+                  onConfirm={handleSubmit}
+                >
+                  <Button type="primary">Submit</Button>
+                </Popconfirm>
                 <Button type="primary" onClick={setDefault}>
                   Clear
                 </Button>

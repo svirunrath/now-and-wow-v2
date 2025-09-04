@@ -31,6 +31,12 @@ const MenuOrder = ({
   }, [discountAmt])
 
   useEffect(() => {
+    if (Number(orderData.product_qty) > Number(orderData.stock_qty)) {
+      setProductQty(orderData.stock_qty)
+      orderData.product_qty = orderData.stock_qty
+      toast.error('Product ' + orderData.product_name + ' is out of stock.')
+      return
+    }
     setProductQty(orderData.product_qty)
   }, [orderData.product_qty])
 
@@ -85,6 +91,8 @@ const MenuOrder = ({
           value={productQty}
           onChange={(e) => {
             if (e > Number(orderData.stock_qty)) {
+              setProductQty(orderData.stock_qty)
+              orderData.product_qty = orderData.stock_qty
               toast.error('Product ' + orderData.product_name + ' is out of stock.')
             } else if (e == 0) {
               toast.error('Product quantity cannot be zero.')

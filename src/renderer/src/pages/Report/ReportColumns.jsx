@@ -552,6 +552,27 @@ const stockCutColumn = [
     }
   },
   {
+    title: 'Product Import Price',
+    dataIndex: 'product_import_price',
+    render: (value) => {
+      return '$ ' + CommaFormatted(CurrencyFormatted(Number(value)))
+    }
+  },
+  {
+    title: 'Tax Amount',
+    dataIndex: 'tax_amt',
+    render: (value) => {
+      return '$ ' + CommaFormatted(CurrencyFormatted(Number(value)))
+    }
+  },
+  {
+    title: 'Shipping Fee',
+    dataIndex: 'shipping_fee',
+    render: (value) => {
+      return '$ ' + CommaFormatted(CurrencyFormatted(Number(value)))
+    }
+  },
+  {
     title: 'Cut Quantity',
     dataIndex: 'stck_cut_qty',
     render: (value) => {
@@ -599,6 +620,18 @@ const stockCutColumnForPrint = [
   {
     title: 'Product Sell Price',
     dataIndex: 'product_sell_price'
+  },
+  {
+    title: 'Product Import',
+    dataIndex: 'product_import_price'
+  },
+  {
+    title: 'Tax Amount',
+    dataIndex: 'tax_amt'
+  },
+  {
+    title: 'Shipping Fee',
+    dataIndex: 'shipping_fee'
   },
   {
     title: 'Cut Quantity',
