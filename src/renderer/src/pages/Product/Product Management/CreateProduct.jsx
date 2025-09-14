@@ -173,6 +173,7 @@ const CreateProduct = ({ isOpen, product, onSubmitEdit }) => {
   const [importId, setImportId] = useState(null)
   const [shippingFee, setShippingFee] = useState(0)
   const [taxAmount, setTaxAmount] = useState(0)
+  const [importDiscount, setImportDiscount] = useState(0)
   const [importPrice, setImportPrice] = useState(0)
   const [updateImportInfo] = useUpdateImportMutation()
   const exchangeRate = localStorage.getItem('exchangeRate')
@@ -216,6 +217,7 @@ const CreateProduct = ({ isOpen, product, onSubmitEdit }) => {
       setShippingFee(detail[0].shipping_fee)
       setImportPrice(detail[0].product_import_price)
       setTaxAmount(detail[0].tax_amt)
+      setImportDiscount(detail[0].product_discount_price)
       setSellPrice(detail[0].product_sell_price)
       setProductUnitTotalPrice(detail[0].product_unit_total_price)
       handleSellPriceChange(Number(detail[0].product_sell_price))
@@ -257,10 +259,10 @@ const CreateProduct = ({ isOpen, product, onSubmitEdit }) => {
     let tax = Number(taxAmount)
     let shipping = Number(shippingFee)
     let tempImportPrice = Number(importPrice)
-    let importTotal = tax + shipping + tempImportPrice
+    let importTotal = tax + shipping + tempImportPrice - importDiscount
 
     setProductUnitTotalPrice(importTotal)
-  }, [taxAmount, shippingFee, importPrice])
+  }, [taxAmount, shippingFee, importPrice, importDiscount])
 
   //Submit product
 
@@ -304,6 +306,7 @@ const CreateProduct = ({ isOpen, product, onSubmitEdit }) => {
         product_id: product.product_id,
         import_qty: detail[0].import_qty,
         product_import_price: Number(importPrice).toFixed(2),
+        product_discount_price: Number(importDiscount).toFixed(2),
         product_sell_price: Number(sellPrice).toFixed(2),
         shipping_fee: Number(shippingFee).toFixed(2),
         tax_amt: Number(taxAmount).toFixed(2),
@@ -326,6 +329,7 @@ const CreateProduct = ({ isOpen, product, onSubmitEdit }) => {
         setImportId(null)
         setImportDataSource([])
         setShippingFee(0)
+        setImportDiscount(0)
         setTaxAmount(0)
         setProductUnitTotalPrice(0)
         setImportPrice(0)
@@ -333,6 +337,8 @@ const CreateProduct = ({ isOpen, product, onSubmitEdit }) => {
         img = null
         formData.delete('file')
         setIsModalOpen(false)
+
+        await import_refetch()
 
         return await onSubmitEdit(true)
       }
@@ -604,6 +610,17 @@ const CreateProduct = ({ isOpen, product, onSubmitEdit }) => {
                 disabled={isDisabled}
                 onChange={(e) => setTaxAmount(e)}
                 value={taxAmount ? Number(taxAmount).toFixed(2) : 0}
+                type="number"
+              />
+            </div>
+            <div className="product-input">
+              <label>Discount :</label>
+              <InputNumber
+                defaultValue={0.0}
+                style={{ width: '100%' }}
+                disabled={isDisabled}
+                onChange={(e) => setImportDiscount(e)}
+                value={importDiscount ? Number(importDiscount).toFixed(2) : 0}
                 type="number"
               />
             </div>
