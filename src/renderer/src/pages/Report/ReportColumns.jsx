@@ -322,6 +322,13 @@ const stockDetailColumn = [
     }
   },
   {
+    title: 'Import Discount',
+    dataIndex: 'product_discount_price',
+    render: (value) => {
+      return '$ ' + CommaFormatted(CurrencyFormatted(Number(value)))
+    }
+  },
+  {
     title: 'Total Price',
     dataIndex: 'product_total_import_price',
     render: (value) => {
@@ -495,6 +502,10 @@ const stockDetailColumnForPrint = [
     dataIndex: 'product_total_import_price'
   },
   {
+    title: 'Import Discount',
+    dataIndex: 'product_discount_price'
+  },
+  {
     title: 'Tax',
     dataIndex: 'tax_amt'
   },
@@ -554,6 +565,13 @@ const stockCutColumn = [
   {
     title: 'Product Import Price',
     dataIndex: 'product_import_price',
+    render: (value) => {
+      return '$ ' + CommaFormatted(CurrencyFormatted(Number(value)))
+    }
+  },
+  {
+    title: 'Import Discount',
+    dataIndex: 'product_discount_price',
     render: (value) => {
       return '$ ' + CommaFormatted(CurrencyFormatted(Number(value)))
     }
@@ -624,6 +642,10 @@ const stockCutColumnForPrint = [
   {
     title: 'Product Import',
     dataIndex: 'product_import_price'
+  },
+  {
+    title: 'Import Discount',
+    dataIndex: 'product_discount_price'
   },
   {
     title: 'Tax Amount',

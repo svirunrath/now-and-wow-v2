@@ -129,7 +129,6 @@ const Report = () => {
             tempDataSource.push({
               sale_date: 'Total',
               customer_name: '',
-
               product_id: '',
               product_name: '',
               sale_qty: sale_qty,
@@ -270,6 +269,7 @@ const Report = () => {
             unit_id: outputData[i].unit_id,
             unit_name: outputData[i].unit_name,
             import_detail_id: outputData[i].import_detail_id,
+            product_discount_price: outputData[i].product_discount_price,
             stock_id: outputData[i].stock_id,
             unit_import_price: Number(outputData[i].unit_import_price),
             stock_qty: Number(outputData[i].stock_qty),
@@ -308,6 +308,7 @@ const Report = () => {
             product_import_price: Number(outputData[i].product_import_price),
             tax_amt: Number(outputData[i].tax_amt),
             shipping_fee: Number(outputData[i].shipping_fee),
+            product_discount_price: Number(outputData[i].product_discount_price),
             stck_cut_qty: Number(outputData[i].stck_cut_qty),
             stock_qty: Number(outputData[i].stock_qty),
             description: outputData[i].description
