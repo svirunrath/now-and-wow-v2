@@ -279,6 +279,10 @@ const stockDetailColumn = [
     hidden: true
   },
   {
+    title: 'Stock Date',
+    dataIndex: 'base_date'
+  },
+  {
     title: 'Product Name',
     dataIndex: 'product_name'
   },
@@ -456,6 +460,10 @@ const stockDetailColumnForPrint = [
     title: 'Product ID',
     dataIndex: 'product_id',
     hidden: true
+  },
+  {
+    title: 'Stock Date',
+    dataIndex: 'base_date'
   },
   {
     title: 'Product Name',

@@ -19,6 +19,7 @@ import ImportReport from './pages/Import/ImportReport.jsx'
 import ProductStock from './pages/Product/ProductStock/ProductStock.jsx'
 import ProductStockCut from './pages/Product/ProductStock/ProductStockCut.jsx'
 import SaleManagement from './pages/Sale/SaleManagement.jsx'
+import Customer from './pages/Customer/Customer.jsx'
 import Report from './pages/Report/Report.jsx'
 import Menu from './pages/Menu/Menu.jsx'
 
@@ -40,6 +41,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/stock" element={<ProductStock />}></Route>
           <Route path="/stock/cut" element={<ProductStockCut />}></Route>
           <Route path="/sale/listing" element={<SaleManagement />}></Route>
+          <Route path="/customer" element={<Customer />}></Route>
         </Route>
       </Routes>
     </HashRouter>

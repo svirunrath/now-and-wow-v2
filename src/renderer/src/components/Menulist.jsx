@@ -14,6 +14,7 @@ import { HiMiniArchiveBoxArrowDown } from 'react-icons/hi2'
 import { FaWarehouse, FaCashRegister, FaReceipt } from 'react-icons/fa'
 import { FaFileLines } from 'react-icons/fa6'
 import { BsFillCalendarMinusFill } from 'react-icons/bs'
+import { IoIosPeople } from 'react-icons/io'
 
 import { logout } from '../slices/userSlices'
 import { useLogoutMutation } from '../slices/userAPISlices'
@@ -110,6 +111,11 @@ const Menulist = () => {
             </NavLink>
           </Menu.Item>
         </Menu.SubMenu>
+        <Menu.Item key="Customer Management" icon={<IoIosPeople />}>
+          <NavLink to="/customer" reloadDocument>
+            Customer
+          </NavLink>
+        </Menu.Item>
         <Menu.Item key="Exchange Rate" icon={<BsCurrencyExchange />}>
           <NavLink to="/exchange" reloadDocument>
             Exchange Rate

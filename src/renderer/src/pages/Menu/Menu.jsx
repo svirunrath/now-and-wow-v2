@@ -1,18 +1,6 @@
 import React from 'react'
 import { useState, useEffect, useRef } from 'react'
-import {
-  Button,
-  Flex,
-  Modal,
-  Empty,
-  Select,
-  Result,
-  Space,
-  Divider,
-  Table,
-  Popconfirm,
-  Checkbox
-} from 'antd'
+import { Button, Flex, Modal, Empty, Select, Divider, Table, Popconfirm, Checkbox } from 'antd'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { Carousel } from 'antd'
 import './Menu.css'
@@ -416,6 +404,22 @@ const Menu = () => {
     }
   }, [order])
 
+  useEffect(() => {
+    const tempArr = []
+    if (order.length > 0) {
+      for (let i = 0; i < order.length; i++) {
+        tempArr.push({
+          name: order[i].product_name,
+          quantity: order[i].product_qty,
+          price: '$ ' + Number(order[i].product_sell_price).toFixed(2),
+          discount: '$ ' + Number(order[i].discount).toFixed(2),
+          total: '$ ' + Number(order[i].total_price).toFixed(2)
+        })
+      }
+      setReceiptOrder(tempArr)
+    }
+  }, [order])
+
   const validateAndRegisterSale = async () => {
     if (order.length === 0) {
       toast.error('There is no order to print.')
@@ -473,6 +477,16 @@ const Menu = () => {
           setReceivedUsd(0)
           setReceivedKhr(0)
           setIsFreeDelivery(false)
+          subTotalUsd = 0
+          subTotalKhr = 0
+          groupDis = 0
+          discountUsd = 0
+          discountKhr = 0
+          totalUsd = 0
+          totalKhr = 0
+
+          changeUsd = 0
+          changeKhr = 0
           saleIdRefetch()
           product_refetch()
           return outputData

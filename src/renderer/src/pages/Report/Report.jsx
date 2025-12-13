@@ -252,7 +252,9 @@ const Report = () => {
     } else if (selectedReportType == 'dstock') {
       const { data, isLoading } = await retrieveStockDetailReport({
         category_id: mainId,
-        product_id: productId
+        product_id: productId,
+        start_date: startDate,
+        end_date: endDate
       })
 
       let tempDataSource = []
@@ -261,7 +263,9 @@ const Report = () => {
         const outputData = data.outputData
 
         for (let i = 0; i < outputData.length; i++) {
+          const date = new Date(outputData[i].base_date).toLocaleDateString('en-GB')
           tempDataSource.push({
+            base_date: date,
             product_id: outputData[i].product_id,
             product_name: outputData[i].product_name,
             sub_category_id: outputData[i].sub_category_id,
@@ -269,7 +273,7 @@ const Report = () => {
             unit_id: outputData[i].unit_id,
             unit_name: outputData[i].unit_name,
             import_detail_id: outputData[i].import_detail_id,
-            product_discount_price: outputData[i].product_discount_price,
+            product_discount_price: Number(outputData[i].product_discount_price),
             stock_id: outputData[i].stock_id,
             unit_import_price: Number(outputData[i].unit_import_price),
             stock_qty: Number(outputData[i].stock_qty),
@@ -425,7 +429,7 @@ const Report = () => {
                 </Select>
               </>
             ) : null}
-            {!['mstock', 'dstock'].includes(selectedReportType) ? (
+            {!['mstock'].includes(selectedReportType) ? (
               <>
                 <p>Inquiry Period:</p>
                 <RangePicker format="YYYY-MM-DD" value={dates} onChange={handleRangeChange} />
