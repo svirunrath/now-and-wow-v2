@@ -80,3 +80,40 @@
   padding-bottom: 20px;
   margin-top: 20px;
 }
+
+.customer-input-block .ant-table-wrapper {
+  width: 100%;
+}
+
+.ant-pagination {
+  padding: 5px !important;
+  margin: 0px !important;
+  background-color: white;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.editing-input,
+.ant-form-item-control-input-content .editing-input {
+  border: 1px solid #000 !important;
+  box-shadow: none !important;
+}
+
+/* On focus – keep black (optional) */
+.editing-input:focus,
+.ant-input-focused.editing-input {
+  border-color: #000 !important;
+  box-shadow: none !important;
+}
+
+/* REQUIRED FIELD ERROR → BLUE BORDER */
+.ant-form-item-has-error .editing-input {
+  border-color: #1677ff !important; /* Ant Design blue */
+  box-shadow: none !important;
+}
+
+/* Optional: blue glow on focus when error */
+.ant-form-item-has-error .editing-input:focus {
+  border-color: #1677ff !important;
+  box-shadow: 0 0 0 1px rgba(22, 119, 255, 0.2) !important;
+}

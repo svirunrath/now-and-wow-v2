@@ -1,26 +1,36 @@
+import dayjs from 'dayjs'
+
 const customerColumns = [
   {
     title: 'Customer ID',
-    dataIndex: 'customerId',
-    key: 'customerId',
+    dataIndex: 'customerID',
+    key: 'customerID',
     hidden: true
   },
   {
     title: 'Customer Name',
     dataIndex: 'customerName',
-    key: 'customerName'
+    key: 'customerName',
+    editable: true
   },
   {
     title: 'Contact 1',
-    dataIndex: 'contact1',
-    key: 'contact1'
+    dataIndex: 'customerContact1',
+    key: 'customerContact1',
+    editable: true
   },
   {
     title: 'Contact 2',
-    dataIndex: 'contact2',
-    key: 'contact2'
+    dataIndex: 'customerContact2',
+    key: 'customerContact2',
+    editable: true
   },
-  { title: 'Registered Date', dataIndex: 'registeredDate', key: 'registeredDate' }
+  {
+    title: 'Registered Date',
+    dataIndex: 'customerRegisteredDate',
+    key: 'customerRegisteredDate',
+    render: (value) => (value ? dayjs(value).format('DD-MM-YYYY') : '-')
+  }
 ].filter((column) => !column.hidden)
 
 export { customerColumns }
